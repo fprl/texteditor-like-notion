@@ -1,5 +1,6 @@
 *.code-workspace
 .env
+.vscode
 
 # dependencies
 **node_modules

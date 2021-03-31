@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import noteService from './services/notes'
 
 import Home from './Home'
+import EditablePage from './EditablePage'
 import Login from './Login'
 import Users from './Users'
 import Notes from './Notes'
@@ -34,6 +35,7 @@ const App = () => {
     <Router>
       <Navbar >
         <Link to={'/'}>home</Link>
+        <Link to={'/editablePage'}>editablePage</Link>
         <Link to={'/notes'}>notes</Link>
         <Link to={'/users'}>users</Link>
         {!user ? <Link to={'/login'}>login</Link> : null}
@@ -46,6 +48,7 @@ const App = () => {
             {user ? <p>{user.name} logged in.</p> : null}
           </Home>
         </Route>
+        <Route path='/editablePage' component={EditablePage} />
         <Route path='/notes/:id' component={Note} />
         <Route path='/notes' >
           <Notes user={user} />
