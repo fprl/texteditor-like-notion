@@ -1,16 +1,17 @@
 import React from 'react'
+import styled from 'styled-components'
+
+const Wrapper = styled.footer`
+  color: blue;
+`
 
 const Footer = () => {
-  const footerStyle = {
-    color: 'green',
-    fontStyle: 'italic',
-    fontSize: 16
-  }
+
   return (
-    <div style={footerStyle}>
+    <Wrapper>
       <br />
-      <em>Note app, Department of Computer Science, University of Helsinki 2021</em>
-    </div>
+      <em>Notion clone, by Franco Romano Losada.</em>
+    </Wrapper>
   )
 }
 
