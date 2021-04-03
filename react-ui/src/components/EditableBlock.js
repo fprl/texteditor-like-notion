@@ -7,15 +7,16 @@ const ContentEditable = styled.pre`
   color: blue;
 `
 
-const EditableBlock = ({ id, html = '', tag = 'p', addBlock }) => {
-  // const [block, setBlock] = useState(html || '')
-  // const [tag, setTag] = useState(type || 'p')
+const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
+  const { id, html, tag } = element
+
   const [block, setBlock] = useState({ id, html, tag })
   const [previousKey, setPreviousKey] = useState('')
+  const [htmlBackup, setHtmlBackup] = useState(null)
 
   const editorRef = useRef(null)
 
-  const handleUseEditable = (html) => {
+  const handleUseEditable = html => {
     setBlock({ ...block, html })
   }
 
@@ -23,11 +24,11 @@ const EditableBlock = ({ id, html = '', tag = 'p', addBlock }) => {
     indentation: 2,
   })
 
-  const onSelectHandler = (e) => {
+/*   const onSelectHandler = e => {
     setBlock({ ...block, tag: e.currentTarget.value })
-  }
+  } */
 
-  const onKeyDownHandler = (e) => {
+  const onKeyDownHandler = e => {
     if (e.key === '/') {
       e.preventDefault()
       console.log('/ was pressed')
@@ -36,28 +37,29 @@ const EditableBlock = ({ id, html = '', tag = 'p', addBlock }) => {
       if (previousKey !== 'Shift') {
         e.preventDefault()
         addBlock({
-          id: block.id,
-          ref: editorRef.current
+          id,
+          ref: editorRef.current,
         })
       }
     }
-    if (e.key === 'Backspace' && !block.html) {
+    if (e.key === 'Backspace' && !block.html.trim()) {
       e.preventDefault()
-      console.log('Backspace was pressed')
+      deleteBlock({
+        id: id,
+        ref: editorRef.current,
+      })
     }
-    setPreviousKey(e.key)
   }
 
   return (
     <>
-      <ContentEditable as={block.tag} ref={editorRef} onKeyDown={onKeyDownHandler}>
+      <ContentEditable
+        as={block.tag}
+        ref={editorRef}
+        onKeyDown={onKeyDownHandler}
+      >
         {block.html}
       </ContentEditable>
-      <select onChange={onSelectHandler} defaultValue={block.tag}>
-        <option>p</option>
-        <option>h1</option>
-        <option>h2</option>
-      </select>
     </>
   )
 }

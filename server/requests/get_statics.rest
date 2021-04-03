@@ -1,1 +1,0 @@
-GET https://radiant-scrubland-01397.herokuapp.com/index.html

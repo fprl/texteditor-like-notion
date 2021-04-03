@@ -1,9 +1,0 @@
-POST http://localhost:3001/api/notes
-Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MDUxMzQ5ZThkMGU0OTJjZGMwMWFjNDUiLCJpYXQiOjE2MTU5NzQwNDV9.N6hJX01uOe5jCGnDJ4XC7Z6DT8U0dRw13WP4YdkeA3w
-
-{
-  "content": "Note from Matti Luukkainen",
-  "important": true,
-  "userId": "6051349e8d0e492cdc01ac45"
-}

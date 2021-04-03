@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import EditableBlock from './EditableBlock'
 import uid from '../utilities/uid'
 
@@ -14,35 +14,57 @@ const initialBlock = [
     tag: 'h1',
   },
 ]
-
 const EditablePage = () => {
   const [blocks, setBlocks] = useState(initialBlock)
-  console.log(blocks)
+  const [lastBlock, setlastBlock] = useState()
 
-/*   useEffect(() => {
-    console.log('Testing')
-  }, [blocks.length]) */
+  useEffect(() => {
+    lastBlock && lastBlock.nextElementSibling.focus()
+  }, [lastBlock])
 
-  const addBlockHandler = (currentBlock) => {
-    const newBlock = { id: uid(), html: '', tag: 'p' }
-
-    const index = blocks.map((b) => b.id).indexOf(currentBlock.id)
+  const updatePageHandler = updatedBlock => {
+    const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
     const updatedBlocks = [...blocks]
-    updatedBlocks.splice(index + 1, 0, newBlock)
+    updatedBlocks[index] = {
+      ...updatedBlocks[index],
+      tag: updatedBlock.tag,
+      html: updatedBlock.html,
+    }
 
-    setBlocks([ ...updatedBlocks ])
-    // const focus = () => currentBlock.ref.nextElementSibling.focus()
+    setBlocks([...updatedBlock])
+  }
+
+  const addBlockHandler = currentBlock => {
+    const lastBlock = { id: uid(), html: '', tag: 'p' }
+
+    const index = blocks.map(b => b.id).indexOf(currentBlock.id)
+    const updatedBlocks = [...blocks]
+    updatedBlocks.splice(index + 1, 0, lastBlock)
+
+    setBlocks([...updatedBlocks])
+    setlastBlock(currentBlock.ref)
+  }
+
+  const deleteBlockHandler = currentBlock => {
+    const previousBlock = currentBlock.ref.previousElementSibling
+
+    const index = blocks.map(b => b.id).indexOf(currentBlock.id)
+    const updatedBlocks = [ ...blocks ]
+    updatedBlocks.splice(index, 1)
+
+    setBlocks([...updatedBlocks])
+    previousBlock && previousBlock.focus()
   }
 
   return (
     <div className="page">
-      {blocks.map((block) => (
+      {blocks.map(block => (
         <EditableBlock
           key={block.id}
-          id={block.id}
-          html={block.html}
-          tag={block.tag}
+          element={block}
           addBlock={addBlockHandler}
+          deleteBlock={deleteBlockHandler}
+          updatePage={updatePageHandler}
         />
       ))}
     </div>
