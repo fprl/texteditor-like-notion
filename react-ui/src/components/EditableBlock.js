@@ -1,46 +1,53 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useEditable } from 'use-editable'
-import uid from '../utilities/uid'
+
+const CMD_KEY = '/'
 
 const ContentEditable = styled.pre`
-  color: blue;
+  margin: var(--spacing-xxs);
+  padding: var(--spacing-xxs);
+  width: 100%;
+  outline-style: none;
+
+  font-size: ${props => props.tag === 'h1' ? 'var(--text-2xl)' : 'var(--text-base)'};
+
+  :hover {
+    background-color: var(--color-hover);
+  }
+
+  :focus {
+    background-color: white;
+  }
 `
 
 const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
-  const { id, html, tag } = element
+  const { id, tag, html } = element
 
-  const [block, setBlock] = useState({ id, html, tag })
-  const [previousKey, setPreviousKey] = useState('')
+  const [block, setBlock] = useState({ id, tag, html })
   const [htmlBackup, setHtmlBackup] = useState(null)
-
   const editorRef = useRef(null)
 
   const handleUseEditable = html => {
-    setBlock({ ...block, html })
+    setBlock(block => ({ ...block, html }))
   }
 
   useEditable(editorRef, handleUseEditable, {
     indentation: 2,
   })
 
-/*   const onSelectHandler = e => {
-    setBlock({ ...block, tag: e.currentTarget.value })
-  } */
-
   const onKeyDownHandler = e => {
-    if (e.key === '/') {
+    // check the CMD, add and delete handlers
+    if (e.key === CMD_KEY) {
       e.preventDefault()
       console.log('/ was pressed')
     }
-    if (e.key === 'Enter') {
-      if (previousKey !== 'Shift') {
-        e.preventDefault()
-        addBlock({
-          id,
-          ref: editorRef.current,
-        })
-      }
+    if (!e.shiftKey && e.key === 'Enter') {
+      e.preventDefault()
+      addBlock({
+        id,
+        ref: editorRef.current,
+      })
     }
     if (e.key === 'Backspace' && !block.html.trim()) {
       e.preventDefault()
@@ -57,6 +64,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         as={block.tag}
         ref={editorRef}
         onKeyDown={onKeyDownHandler}
+        tag={block.tag}
       >
         {block.html}
       </ContentEditable>

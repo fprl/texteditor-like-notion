@@ -10,17 +10,16 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 
 const App = () => {
-
   return (
     <Router>
-      <Navbar >
-        <Link to={'/'}>Notion clone</Link>
+      <Navbar>
+        <Link to={'/'}>notion.clone</Link>
       </Navbar>
 
       <Switch>
-        <Route path='/' exact component={EditablePage} />
-        <Route path='*' component={NotFound} />
-        <Route path='/404' component={NotFound} />
+        <Route path="/" exact component={EditablePage} />
+        <Route path="*" component={NotFound} />
+        <Route path="/404" component={NotFound} />
       </Switch>
 
       <Footer />

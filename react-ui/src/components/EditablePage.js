@@ -1,6 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { usePrevious } from '../hooks'
+import { uid, setCaretToEnd } from '../utilities'
+
 import EditableBlock from './EditableBlock'
-import uid from '../utilities/uid'
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+`
+
+const PageContent = styled.article`
+  width: 900px;
+  max-width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 const initialBlock = [
   {
@@ -17,10 +36,20 @@ const initialBlock = [
 const EditablePage = () => {
   const [blocks, setBlocks] = useState(initialBlock)
   const [lastBlock, setlastBlock] = useState()
+  const prevBlocks = usePrevious(blocks)
 
   useEffect(() => {
-    lastBlock && lastBlock.nextElementSibling.focus()
-  }, [lastBlock])
+    console.group('Mount')
+    console.log('previous blocks: ', prevBlocks)
+    console.log('actual blocks: ', blocks)
+    console.groupEnd()
+
+    if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
+      lastBlock && lastBlock.nextElementSibling.focus()
+    } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
+      lastBlock && setCaretToEnd(lastBlock)
+    }
+  }, [lastBlock, prevBlocks])
 
   const updatePageHandler = updatedBlock => {
     const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
@@ -35,11 +64,11 @@ const EditablePage = () => {
   }
 
   const addBlockHandler = currentBlock => {
-    const lastBlock = { id: uid(), html: '', tag: 'p' }
+    const newBlock = { id: uid(), tag: 'p', html: '' }
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
     const updatedBlocks = [...blocks]
-    updatedBlocks.splice(index + 1, 0, lastBlock)
+    updatedBlocks.splice(index + 1, 0, newBlock)
 
     setBlocks([...updatedBlocks])
     setlastBlock(currentBlock.ref)
@@ -49,25 +78,27 @@ const EditablePage = () => {
     const previousBlock = currentBlock.ref.previousElementSibling
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
-    const updatedBlocks = [ ...blocks ]
+    const updatedBlocks = [...blocks]
     updatedBlocks.splice(index, 1)
 
     setBlocks([...updatedBlocks])
-    previousBlock && previousBlock.focus()
+    setlastBlock(previousBlock)
   }
 
   return (
-    <div className="page">
-      {blocks.map(block => (
-        <EditableBlock
-          key={block.id}
-          element={block}
-          addBlock={addBlockHandler}
-          deleteBlock={deleteBlockHandler}
-          updatePage={updatePageHandler}
-        />
-      ))}
-    </div>
+    <Container>
+      <PageContent className="page">
+        {blocks.map(block => (
+          <EditableBlock
+            key={block.id}
+            element={block}
+            addBlock={addBlockHandler}
+            deleteBlock={deleteBlockHandler}
+            updatePage={updatePageHandler}
+          />
+        ))}
+      </PageContent>
+    </Container>
   )
 }
 
