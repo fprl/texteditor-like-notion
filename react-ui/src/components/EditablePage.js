@@ -9,7 +9,6 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-
 `
 
 const PageContent = styled.article`
@@ -33,6 +32,7 @@ const initialBlock = [
     tag: 'h1',
   },
 ]
+
 const EditablePage = () => {
   const [blocks, setBlocks] = useState(initialBlock)
   const [lastBlock, setlastBlock] = useState()

@@ -26,6 +26,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
   const [block, setBlock] = useState({ id, tag, html })
   const [htmlBackup, setHtmlBackup] = useState(null)
+
   const editorRef = useRef(null)
 
   const handleUseEditable = html => {
@@ -37,10 +38,9 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   })
 
   const onKeyDownHandler = e => {
-    // check the CMD, add and delete handlers
     if (e.key === CMD_KEY) {
       e.preventDefault()
-      console.log('/ was pressed')
+      setHtmlBackup(html)
     }
     if (!e.shiftKey && e.key === 'Enter') {
       e.preventDefault()

@@ -8,14 +8,10 @@ const Container = styled.div`
 `
 
 const Nav = styled.nav`
-  /* display: flex;
-  justify-content: center; */
-
-  margin: var(--spacing-s);
-
   width: 1200px;
   max-width: 100%;
 
+  margin: var(--spacing-s);
   font-size: var(--text-2xl);
 
   & a {
