@@ -5,24 +5,6 @@ import SelectMenu from './SelectTagMenu'
 
 const CMD_KEY = '/'
 
-const ContentEditable = styled.pre`
-  margin: var(--spacing-xxs);
-  padding: var(--spacing-xxs);
-  width: 100%;
-  outline-style: none;
-
-  font-size: ${props =>
-    props.tag === 'h1' ? 'var(--text-2xl)' : 'var(--text-base)'};
-
-  :hover {
-    background-color: var(--color-hover);
-  }
-
-  :focus {
-    background-color: var(--color-background);
-  }
-`
-
 const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const { id, tag, html } = element
 
@@ -76,9 +58,31 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         {block.html}
       </ContentEditable>
 
-      {isTagMenuOpen && <SelectMenu />}
+      {isTagMenuOpen && (
+        <div style={{ position: 'relative', width: '100%' }}>
+          <SelectMenu />
+        </div>
+      )}
     </>
   )
 }
 
 export default EditableBlock
+
+const ContentEditable = styled.pre`
+  margin: var(--spacing-xxs);
+  padding: var(--spacing-xxs);
+  width: 100%;
+  outline-style: none;
+
+  font-size: ${props =>
+    props.tag === 'h1' ? 'var(--text-2xl)' : 'var(--text-base)'};
+
+  :hover {
+    background-color: var(--color-hover);
+  }
+
+  :focus {
+    background-color: var(--color-background);
+  }
+`

@@ -20,7 +20,7 @@ const GlobalStyles = createGlobalStyle`
     --width-menu: 15rem;
     --max-width-menu: 40rem;
 
-    --text-sm: 0.85rem;
+    --text-sm: 0.90rem;
     --text-base: 1rem;
     --text-lg: 1.125rem;
     --text-xl: 1.25rem;

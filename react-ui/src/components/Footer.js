@@ -1,6 +1,20 @@
 import React from 'react'
 import styled from 'styled-components'
 
+const Footer = () => {
+
+  return (
+    <Container>
+      <Wrapper>
+        <br />
+        <em>Notion clone, by Franco Romano Losada.</em>
+      </Wrapper>
+    </Container>
+  )
+}
+
+export default Footer
+
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -23,17 +37,3 @@ const Wrapper = styled.footer`
     color: var(--color-text);
   }
 `
-
-const Footer = () => {
-
-  return (
-    <Container>
-      <Wrapper>
-        <br />
-        <em>Notion clone, by Franco Romano Losada.</em>
-      </Wrapper>
-    </Container>
-  )
-}
-
-export default Footer

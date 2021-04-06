@@ -1,6 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 
+const Navbar = props => {
+  return (
+    <Container>
+      <Nav className="navbar">{props.children}</Nav>
+    </Container>
+  )
+}
+
+export default Navbar
+
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -19,13 +29,3 @@ const Nav = styled.nav`
     color: var(--color-text);
   }
 `
-
-const Navbar = props => {
-  return (
-    <Container>
-      <Nav className="navbar">{props.children}</Nav>
-    </Container>
-  )
-}
-
-export default Navbar

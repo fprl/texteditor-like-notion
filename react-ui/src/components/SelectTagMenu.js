@@ -40,7 +40,7 @@ const SelectTagMenu = ({ position, closeMenu, handleSelection }) => {
   const [command, setCommand] = useState('')
 
   return (
-    <Menu>
+    <Menu y={1} x={1}>
       <MenuList>
         {tagList.map(tag => {
           return (
@@ -58,14 +58,18 @@ const SelectTagMenu = ({ position, closeMenu, handleSelection }) => {
 export default SelectTagMenu
 
 const Menu = styled.div`
-  position: relative;
   display: flex;
+
+  position: absolute;
+  top: ${p => `${p.y}px`};
+  left: ${p => `${p.x}px`};
 
   width: var(--width-menu);
 
   background-color: white;
   box-shadow: 2px 2px 10px 1px var(--color-shadow);
 `
+
 const MenuList = styled.ul`
   width: 100%;
 

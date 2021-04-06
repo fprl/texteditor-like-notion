@@ -5,20 +5,6 @@ import { uid, setCaretToEnd } from '../utilities'
 
 import EditableBlock from './EditableBlock'
 
-const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const PageContent = styled.article`
-  width: 900px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`
-
 const initialBlock = [
   {
     id: uid(),
@@ -102,3 +88,17 @@ const EditablePage = () => {
 }
 
 export default EditablePage
+
+const Container = styled.main`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const PageContent = styled.article`
+  width: 900px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
