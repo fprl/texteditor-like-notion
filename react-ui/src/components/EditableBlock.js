@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useEditable } from 'use-editable'
+import SelectMenu from './SelectTagMenu'
 
 const CMD_KEY = '/'
 
@@ -10,14 +11,15 @@ const ContentEditable = styled.pre`
   width: 100%;
   outline-style: none;
 
-  font-size: ${props => props.tag === 'h1' ? 'var(--text-2xl)' : 'var(--text-base)'};
+  font-size: ${props =>
+    props.tag === 'h1' ? 'var(--text-2xl)' : 'var(--text-base)'};
 
   :hover {
     background-color: var(--color-hover);
   }
 
   :focus {
-    background-color: white;
+    background-color: var(--color-background);
   }
 `
 
@@ -26,6 +28,9 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
   const [block, setBlock] = useState({ id, tag, html })
   const [htmlBackup, setHtmlBackup] = useState(null)
+
+  const [isTagMenuOpen, setIsTagMenuOpen] = useState(true)
+  const [tagMenuPosition, setTagMenuPosition] = useState({ x: null, y: null })
 
   const editorRef = useRef(null)
 
@@ -58,6 +63,8 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     }
   }
 
+  const handleSelection = tag => {}
+
   return (
     <>
       <ContentEditable
@@ -68,6 +75,8 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
       >
         {block.html}
       </ContentEditable>
+
+      {isTagMenuOpen && <SelectMenu />}
     </>
   )
 }

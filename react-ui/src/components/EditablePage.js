@@ -13,7 +13,6 @@ const Container = styled.div`
 
 const PageContent = styled.article`
   width: 900px;
-  max-width: 100%;
 
   display: flex;
   flex-direction: column;
