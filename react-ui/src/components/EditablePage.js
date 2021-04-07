@@ -30,9 +30,9 @@ const EditablePage = () => {
     console.groupEnd()
 
     if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-      lastBlock && lastBlock.nextElementSibling.focus()
+      lastBlock && lastBlock.nextElementSibling.querySelector('#content-editable').focus()
     } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-      lastBlock && setCaretToEnd(lastBlock)
+      lastBlock && setCaretToEnd(lastBlock.querySelector('#content-editable'))
     }
   }, [lastBlock, prevBlocks])
 
@@ -91,12 +91,14 @@ export default EditablePage
 
 const Container = styled.main`
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
+
+  min-height: calc(100vh - 56px - 48px);
 `
 
 const PageContent = styled.article`
-  width: 900px;
+  width: 45rem;
 
   display: flex;
   flex-direction: column;

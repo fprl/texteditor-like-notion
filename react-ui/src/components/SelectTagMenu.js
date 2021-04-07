@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import matchSorter from 'match-sorter'
 
@@ -34,17 +34,27 @@ const allowedTags = [
   },
 ]
 
-const SelectTagMenu = ({ position, closeMenu, handleSelection }) => {
+const SelectTagMenu = ({ position, handleSelection }) => {
   const [tagList, setTagList] = useState(allowedTags)
   const [selectedTag, setSelectedTag] = useState(0)
   const [command, setCommand] = useState('')
+  const [size, setSize] = useState({ height: null, width: null })
+
+  const menuRef = useRef()
+
+  useEffect(() => {
+    const height = menuRef.current.getBoundingClientRect().height
+    const width = menuRef.current.getBoundingClientRect().width
+    const extra = menuRef.current.getBoundingClientRect()
+    setSize({ ...size, height, width, extra })
+  }, [])
 
   return (
-    <Menu y={1} x={1}>
+    <Menu top={size.height / 2 - size.height} left={-size.width} ref={menuRef}>
       <MenuList>
         {tagList.map(tag => {
           return (
-            <MenuItemWrapper key={tag.id}>
+            <MenuItemWrapper key={tag.id} onClick={handleSelection}>
               <MenuItemImg src={tag.image} alt={tag.id} />
               <MenuItem>{tag.label}</MenuItem>
             </MenuItemWrapper>
@@ -59,10 +69,11 @@ export default SelectTagMenu
 
 const Menu = styled.div`
   display: flex;
+  z-index: 100;
 
   position: absolute;
-  top: ${p => `${p.y}px`};
-  left: ${p => `${p.x}px`};
+  top: ${p => `${p.top}px`};
+  left: ${p => `${p.left}px`};
 
   width: var(--width-menu);
 
