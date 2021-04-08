@@ -4,7 +4,7 @@ import dots, { ReactComponent as Dots } from '../images/blocks/dots-action.svg'
 import plus, { ReactComponent as Plus } from '../images/blocks/plus-action.svg'
 
 const blockAction = ({ type, onClick }) => (
-  <Wrapper onClick={onClick}>
+  <Wrapper id='block-action' onClick={onClick}>
     {type === 'dots' ? (
       <Dots fill="var(--color-gray)" width="14px" heigth="14px" />
     ) : (
@@ -19,8 +19,13 @@ const Wrapper = styled.div`
   width: 18px;
   height: 24px;
 
-  display: flex;
   visibility: hidden;
+  display: flex;
+  justify-content: center;
 
   cursor: pointer;
+
+  :hover {
+    background-color: var(--color-gray-25);
+  }
 `

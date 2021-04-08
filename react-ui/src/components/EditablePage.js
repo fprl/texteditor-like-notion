@@ -3,23 +3,33 @@ import styled from 'styled-components'
 import { usePrevious } from '../hooks'
 import { uid, setCaretToEnd } from '../utilities'
 
+import PageNavbar from './PageNavbar'
+import EditableInformation from './EditableInformation'
 import EditableBlock from './EditableBlock'
 
-const initialBlock = [
-  {
+const page = {
+  information: {
     id: uid(),
-    html: 'First block',
-    tag: 'p',
+    title: 'Your first page!',
+    cover: null,
   },
-  {
-    id: uid(),
-    html: 'Second block',
-    tag: 'h1',
-  },
-]
+  blocks: [
+    {
+      id: uid(),
+      html: 'First block',
+      tag: 'p',
+    },
+    {
+      id: uid(),
+      html: 'Second block',
+      tag: 'h1',
+    },
+  ],
+}
 
 const EditablePage = () => {
-  const [blocks, setBlocks] = useState(initialBlock)
+  const [pageInformation, setPageInformation] = useState(page.information)
+  const [blocks, setBlocks] = useState(page.blocks)
   const [lastBlock, setlastBlock] = useState()
   const prevBlocks = usePrevious(blocks)
 
@@ -30,7 +40,8 @@ const EditablePage = () => {
     console.groupEnd()
 
     if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-      lastBlock && lastBlock.nextElementSibling.querySelector('#content-editable').focus()
+      lastBlock &&
+        lastBlock.nextElementSibling.querySelector('#content-editable').focus()
     } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
       lastBlock && setCaretToEnd(lastBlock.querySelector('#content-editable'))
     }
@@ -72,6 +83,14 @@ const EditablePage = () => {
 
   return (
     <Container>
+      <PageNavbar title={pageInformation.title}/>
+
+      <PageInformation>
+        <EditableInformation pageInformation={pageInformation} />
+      </PageInformation>
+
+      <PageDivider />
+
       <PageContent className="page">
         {blocks.map(block => (
           <EditableBlock
@@ -91,16 +110,37 @@ export default EditablePage
 
 const Container = styled.main`
   display: flex;
-  align-items: start;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
 
+  width: 100%;
   min-height: calc(100vh - 56px - 48px);
 `
 
-const PageContent = styled.article`
-  width: 45rem;
-
+const PageInformation = styled.article`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  width: 100%;
+  height: 10rem;
+`
+
+const PageDivider = styled.div`
+  height: 1.5rem;
+  width: 45rem;
+`
+
+const PageContent = styled.article`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 45rem;
+
+/*   overflow: auto;
+  ::-webkit-scrollbar {
+    display: none;
+  } */
 `

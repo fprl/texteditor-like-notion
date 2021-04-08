@@ -1,30 +1,37 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import styled from 'styled-components'
 
 import noteService from '../services/notes'
 
 import EditablePage from './EditablePage'
 import NotFound from './NotFound'
 
-import Navbar from './Navbar'
+import Sidebar from './Sidebar'
 import Footer from './Footer'
 
 const App = () => {
   return (
     <Router>
-      <Navbar>
-        <Link to={'/'}>notion.clone</Link>
-      </Navbar>
+      <AppContainer>
+        <Sidebar>
+          <Link to={'/'}>notion.clone</Link>
+          <Footer />
+        </Sidebar>
 
-      <Switch>
-        <Route path="/" exact component={EditablePage} />
-        <Route path="*" component={NotFound} />
-        <Route path="/404" component={NotFound} />
-      </Switch>
-
-      <Footer />
+        <Switch>
+          <Route path="/" exact component={EditablePage} />
+          <Route path="*" component={NotFound} />
+          <Route path="/404" component={NotFound} />
+        </Switch>
+      </AppContainer>
     </Router>
   )
 }
 
 export default App
+
+const AppContainer = styled.div`
+  display: flex;
+  height: 100vh;
+`

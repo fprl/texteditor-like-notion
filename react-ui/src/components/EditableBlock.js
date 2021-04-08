@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useEditable } from 'use-editable'
+
 import { useMousePosition } from '../hooks/useMousePosition'
 import useOutsideClick from '../hooks/useOutsideClick'
 
@@ -74,8 +75,8 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
       <ContentEditable
         id="content-editable"
         as={block.tag}
-        ref={editorRef}
         tag={block.tag}
+        ref={editorRef}
         onKeyDown={onKeyDownHandler}
       >
         {block.html}
@@ -94,7 +95,7 @@ const DataBlock = styled.article`
   width: 100%;
 
   :hover {
-    svg {
+    #block-action {
       visibility: visible;
     }
   }

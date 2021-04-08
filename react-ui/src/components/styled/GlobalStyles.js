@@ -8,6 +8,7 @@ const GlobalStyles = createGlobalStyle`
     --color-text: black;
     --color-text-inverse: white;
     --color-background: white;
+    --color-gray-25: hsl(6, 0%, 95%);
     --color-gray: hsl(6, 0%, 80%);
     --color-border: hsl(6, 0%, 92%);
     --color-shadow: hsl(6, 0%, 92%);

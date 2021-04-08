@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
-import matchSorter from 'match-sorter'
 
 import textImage from '../images/blocks/text.png'
 import h1Image from '../images/blocks/heading_1.png'
@@ -45,8 +44,7 @@ const SelectTagMenu = ({ position, handleSelection }) => {
   useEffect(() => {
     const height = menuRef.current.getBoundingClientRect().height
     const width = menuRef.current.getBoundingClientRect().width
-    const extra = menuRef.current.getBoundingClientRect()
-    setSize({ ...size, height, width, extra })
+    setSize({ ...size, height, width })
   }, [])
 
   return (
