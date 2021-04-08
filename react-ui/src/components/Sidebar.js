@@ -6,69 +6,57 @@ const Sidebar = ({ children }) => {
   const [width, setWidth] = React.useState(192)
 
   return (
-    <Container
-      maxHeight={'100vh'}
-      size={{ width }}
-      onResizeStop={(e, direction, ref, d) => {
-        setWidth(width + d.width)
-      }}
-      enable={{
-        top: false,
-        right: true,
-        bottom: false,
-        left: false,
-        topRight: false,
-        bottomRight: false,
-        bottomLeft: false,
-        topLeft: false,
-      }}
-    >
-      <Nav>{children}</Nav>
-    </Container>
+    <Nav>
+      <Container
+        size={{ width }}
+        onResizeStop={(e, direction, ref, d) => {
+          setWidth(width + d.width)
+        }}
+        enable={{
+          top: false,
+          right: true,
+          bottom: false,
+          left: false,
+          topRight: false,
+          bottomRight: false,
+          bottomLeft: false,
+          topLeft: false,
+        }}
+      >
+        {children}
+      </Container>
+    </Nav>
   )
 }
 
 export default Sidebar
 
-const Container = styled(Resizable)`
-  /* position: fixed; */
+const Nav = styled.nav`
   position: sticky;
-  display: flex;
   top: 0;
   left: 0;
-  bottom: 0;
 
-  min-width: 12rem;
-  max-width: 25rem;
-  width: ${p => (p.width ? p.width : '30rem')};
-  height: 100%;
-
+  height: 100vh;
   background-color: var(--color-gray-25);
-
-  :first-child:hover {
-    border-right: 2px solid var(--color-gray);
-  }
 `
 
-const Nav = styled.nav`
-  width: 100%;
+const Container = styled(Resizable)`
+  display: flex !important;
+  flex-direction: column !important;
+
+  min-width: 12rem !important;
+  max-width: 25rem !important;
+  height: 100% !important;
 
   padding: var(--spacing-s);
   font-size: var(--text-2xl);
 
+  :first-child:hover {
+    border-right: 2px solid var(--color-gray);
+  }
+
   & a {
     text-decoration: none;
     color: var(--color-text);
-  }
-`
-const ResizerColumn = styled.div`
-  position: relative;
-  left: 3px;
-  width: 6px;
-
-  cursor: col-resize;
-
-  :hover {
-    background-color: var(--color-gray);
   }
 `

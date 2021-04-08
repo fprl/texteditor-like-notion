@@ -12,19 +12,18 @@ const PageNavbar = ({ title }) => {
 export default PageNavbar
 
 const Navbar = styled.nav`
-  /* position: relative; */
   position: sticky;
   top: 0;
+  z-index: 10;
 
-  height: 3rem;
   width: 100%;
+  height: 3rem;
+
   padding: var(--spacing-s);
-  max-width: 100vh;
+  background-color: var(--color-background);
 `
 
 const ItemsWrapper = styled.div`
-  /* position: absolute; */
-
   height: 100%;
   top: 0;
   left: 0;
