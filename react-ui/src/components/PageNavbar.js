@@ -21,6 +21,7 @@ const Navbar = styled.nav`
 
   padding: var(--spacing-s);
   background-color: var(--color-background);
+  font-size: var(--text-sm);
 `
 
 const ItemsWrapper = styled.div`

@@ -8,7 +8,6 @@ import Reset from './components/styled/Reset'
 
 ReactDOM.render(
   <>
-    <Fonts />
     <Reset />
     <GlobalStyles />
     <App />

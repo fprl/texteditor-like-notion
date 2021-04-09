@@ -18,7 +18,7 @@ const page = {
       id: uid(),
       html: 'First block',
       tag: 'p',
-      placeholder: 'Paragraph',
+      placeholder: "Type '/' for commands",
     },
     {
       id: uid(),
@@ -74,7 +74,12 @@ const EditablePage = () => {
   }
 
   const addBlockHandler = currentBlock => {
-    const newBlock = { id: uid(), tag: 'p', html: '', placeholder: 'Paragraph' }
+    const newBlock = {
+      id: uid(),
+      tag: 'p',
+      html: '',
+      placeholder: 'Type \'/\' for commands',
+    }
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
     const updatedBlocks = [...blocks]

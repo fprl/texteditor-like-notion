@@ -33,6 +33,13 @@ const GlobalStyles = createGlobalStyle`
     --spacing-m: 1.5rem;
     --spacing-l: 2rem;
   }
+
+  html {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+	  font-size: 16px;
+	  font-weight: 400;
+	  color: var(--color-text);
+  }
 `
 
 export default GlobalStyles

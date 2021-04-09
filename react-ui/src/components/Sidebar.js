@@ -49,7 +49,7 @@ const Container = styled(Resizable)`
   height: 100% !important;
 
   padding: var(--spacing-s);
-  font-size: var(--text-2xl);
+  font-size: var(--text-sm);
 
   :first-child:hover {
     border-right: 2px solid var(--color-gray);

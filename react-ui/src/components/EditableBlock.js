@@ -61,7 +61,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const handleSelection = tag => {}
 
   return (
-    <DataBlock ref={blockRef}>
+    <DataBlock ref={blockRef} tag={block.tag}>
       <BlockAction
         type={'plus'}
         onClick={() => addBlock({ id, ref: blockRef.current })}
@@ -76,17 +76,18 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
           <SelectTagMenu handleSelection={handleSelection} />
         </div>
       )}
-
-      <ContentEditable
-        id="content-editable"
-        as={block.tag}
-        tag={block.tag}
-        ref={editorRef}
-        onKeyDown={onKeyDownHandler}
-        placeholder={block.placeholder}
-      >
-        {block.html.trim()}
-      </ContentEditable>
+      <EditableWrapper tag={block.tag}>
+        <ContentEditable
+          id="content-editable"
+          as={block.tag}
+          tag={block.tag}
+          ref={editorRef}
+          onKeyDown={onKeyDownHandler}
+        >
+          {block.html}
+        </ContentEditable>
+        {block.html.trim().length === 0 && <PlaceHolder tag={block.tag} placeholder={block.placeholder}/>}
+      </EditableWrapper>
     </DataBlock>
   )
 }
@@ -96,46 +97,21 @@ export default EditableBlock
 const DataBlock = styled.article`
   position: relative;
   display: flex;
-  align-items: center;
+  align-content: flex-start;
 
   width: 100%;
-
-  :hover {
-    #block-action {
-      visibility: visible;
-    }
-  }
-`
-
-const ContentEditable = styled.pre`
-  margin: var(--spacing-xxs);
-  padding: var(--spacing-xxs);
-  outline-style: none;
-
-  width: 100%;
-
-  :empty:before {
-    content: attr(placeholder);
-    color: var(--color-gray)
-  }
 
   ${props => {
     if (props.tag === 'h1') {
       return `
-        font-size: var(--text-3xl);
-        font-weight: 600;
         margin-top: var(--spacing-l);
       `
     } else if (props.tag === 'h2') {
       return `
-        font-size: var(--text-2xl);
-        font-weight: 600;
         margin-top: var(--spacing-m);
       `
     } else if (props.tag === 'h3') {
       return `
-        font-size: var(--text-xl);
-        font-weight: 600;
         margin-top: var(--spacing-s);
       `
     } else {
@@ -146,10 +122,84 @@ const ContentEditable = styled.pre`
   }}
 
   :hover {
-    background-color: var(--color-hover);
+    #block-action {
+      visibility: visible;
+    }
   }
+`
 
-  :focus {
-    background-color: var(--color-background);
+const EditableWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`
+
+const ContentEditable = styled.div`
+  position: relative;
+  margin: var(--spacing-xxs);
+  padding: var(--spacing-xxs);
+  outline-style: none;
+
+  ${props => {
+    if (props.tag === 'h1') {
+      return `
+        font-size: var(--text-3xl);
+        font-weight: 600;
+      `
+    } else if (props.tag === 'h2') {
+      return `
+        font-size: var(--text-2xl);
+        font-weight: 600;
+      `
+    } else if (props.tag === 'h3') {
+      return `
+        font-size: var(--text-xl);
+        font-weight: 600;
+      `
+    } else {
+      return `
+      `
+    }
+  }}
+
+  :focus ~ div {
+    visibility: visible;
+  }
+`
+
+const PlaceHolder = styled.div`
+  position: absolute;
+  top: 0;
+  z-index: -1;
+  margin: var(--spacing-xxs);
+  padding: var(--spacing-xxs);
+  visibility: hidden;
+
+  width: 100%;
+  height: 100%;
+
+  :empty:before {
+    content: attr(placeholder);
+    color: var(--color-gray);
+    ${props => {
+    if (props.tag === 'h1') {
+      return `
+        font-size: var(--text-3xl);
+        font-weight: 600;
+      `
+    } else if (props.tag === 'h2') {
+      return `
+        font-size: var(--text-2xl);
+        font-weight: 600;
+      `
+    } else if (props.tag === 'h3') {
+      return `
+        font-size: var(--text-xl);
+        font-weight: 600;
+      `
+    } else {
+      return `
+      `
+    }
+  }}
   }
 `

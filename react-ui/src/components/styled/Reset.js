@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 
 const Reset = createGlobalStyle`
+
 * {
 	box-sizing:border-box;
 }
@@ -21,10 +22,7 @@ time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
-	font-size: 16px;
-	font-weight: 400;
-	color: var(--color-text);
+	font-size: 100%;
 	vertical-align: baseline;
 }
 

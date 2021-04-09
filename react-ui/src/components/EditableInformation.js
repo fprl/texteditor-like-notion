@@ -56,7 +56,7 @@ const EditableInformation = ({ pageInformation, addInformation, deleteInformatio
         onKeyDown={onKeyDownHandler}
         placeholder='Untitled'
       >
-        {information.title.trim()}
+        {information.title.length > 1 ? information.title : ''}
       </TitleEditable>
     </InformationBlock>
   )
