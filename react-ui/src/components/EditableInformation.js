@@ -19,9 +19,7 @@ const EditableInformation = ({ pageInformation, addInformation, deleteInformatio
 
   // effect for managing document title
   useEffect(() => {
-    console.log(information.title)
-    console.log(information.title.charCodeAt(0))
-    document.title.trim() ? document.title = information.title : document.title = 'Notion clone'
+    document.title.trim() ? document.title = information.title : document.title = 'Untitled'
   }, [information.title])
 
   // hooks for managing content editable
@@ -50,14 +48,16 @@ const EditableInformation = ({ pageInformation, addInformation, deleteInformatio
 
   return (
     <InformationBlock ref={informationRef}>
-      <TitleEditable
-        id="title-editable"
-        ref={titleRef}
-        onKeyDown={onKeyDownHandler}
-        placeholder='Untitled'
-      >
-        {information.title.length > 1 ? information.title : ''}
-      </TitleEditable>
+      <EditableWrapper>
+        <TitleEditable
+          id="title-editable"
+          ref={titleRef}
+          onKeyDown={onKeyDownHandler}
+        >
+          {information.title}
+        </TitleEditable>
+        {information.title.trim().length === 0 && <PlaceHolder placeholder='Untitled' />}
+      </EditableWrapper>
     </InformationBlock>
   )
 }
@@ -74,6 +74,11 @@ const InformationBlock = styled.article`
   height: 100%;
 `
 
+const EditableWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`
+
 const TitleEditable = styled.h1`
   margin: var(--spacing-xxs);
   padding: var(--spacing-xxs);
@@ -83,17 +88,22 @@ const TitleEditable = styled.h1`
 
   font-size: var(--text-4xl);
   font-weight: 700;
+`
+
+const PlaceHolder = styled.div`
+  position: absolute;
+  top: 0rem;
+  z-index: -1;
+  margin: var(--spacing-xxs);
+  padding: var(--spacing-xxs);
+
+  width: 100%;
+  height: 100%;
 
   :empty:before {
     content: attr(placeholder);
-    color: var(--color-gray)
-  }
-
-  :hover {
-    background-color: var(--color-hover);
-  }
-
-  :focus {
-    background-color: var(--color-background);
+    color: var(--color-gray);
+    font-size: var(--text-4xl);
+    font-weight: 700;
   }
 `

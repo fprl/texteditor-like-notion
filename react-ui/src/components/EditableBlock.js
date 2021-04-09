@@ -172,10 +172,15 @@ const PlaceHolder = styled.div`
   z-index: -1;
   margin: var(--spacing-xxs);
   padding: var(--spacing-xxs);
+  
   visibility: hidden;
-
-  width: 100%;
-  height: 100%;
+  ${props => {
+    if (props.tag !== 'p') {
+      return `
+        visibility: visible;
+      `
+    }
+  }}
 
   :empty:before {
     content: attr(placeholder);
