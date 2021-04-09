@@ -18,11 +18,25 @@ const page = {
       id: uid(),
       html: 'First block',
       tag: 'p',
+      placeholder: 'Paragraph',
     },
     {
       id: uid(),
       html: 'Second block',
       tag: 'h1',
+      placeholder: 'Heading 1',
+    },
+    {
+      id: uid(),
+      html: 'Third block',
+      tag: 'h2',
+      placeholder: 'Heading 2',
+    },
+    {
+      id: uid(),
+      html: 'Fourth block',
+      tag: 'h3',
+      placeholder: 'Heading 3',
     },
   ],
 }
@@ -60,7 +74,7 @@ const EditablePage = () => {
   }
 
   const addBlockHandler = currentBlock => {
-    const newBlock = { id: uid(), tag: 'p', html: '' }
+    const newBlock = { id: uid(), tag: 'p', html: '', placeholder: 'Paragraph' }
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
     const updatedBlocks = [...blocks]
@@ -83,7 +97,7 @@ const EditablePage = () => {
 
   return (
     <Container>
-      <PageNavbar title={pageInformation.title}/>
+      <PageNavbar title={pageInformation.title} />
 
       <PageInformation>
         <EditableInformation pageInformation={pageInformation} />
@@ -139,7 +153,7 @@ const PageContent = styled.article`
 
   width: 45rem;
 
-/*   overflow: auto;
+  /*   overflow: auto;
   ::-webkit-scrollbar {
     display: none;
   } */

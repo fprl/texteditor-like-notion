@@ -8,19 +8,24 @@ import BlockAction from './blockAction'
 import SelectTagMenu from './SelectTagMenu'
 
 const EditableInformation = ({ pageInformation, addInformation, deleteInformation, updateInformation }) => {
-  console.log(pageInformation)
   const { id, title, cover } = pageInformation
 
   const [information, setInformation] = useState({ id, title, cover })
   const [isTagMenuOpen, setIsTagMenuOpen] = useState(false)
 
-
   const informationRef = useRef(null)
   const titleRef = useRef(null)
   const menuRef = useRef(null)
 
+  // effect for managing document title
+  useEffect(() => {
+    console.log(information.title)
+    console.log(information.title.charCodeAt(0))
+    document.title.trim() ? document.title = information.title : document.title = 'Notion clone'
+  }, [information.title])
+
   // hooks for managing content editable
-  const handleUseEditable = html => {
+  const handleUseEditable = title => {
     setInformation(information => ({ ...information, title }))
   }
 
@@ -38,7 +43,7 @@ const EditableInformation = ({ pageInformation, addInformation, deleteInformatio
       e.preventDefault()
       addBlock({
         id,
-        ref: blockRef.current,
+        ref: informationRef.current,
       })
     }
   }
@@ -49,8 +54,9 @@ const EditableInformation = ({ pageInformation, addInformation, deleteInformatio
         id="title-editable"
         ref={titleRef}
         onKeyDown={onKeyDownHandler}
+        placeholder='Untitled'
       >
-        {information.title}
+        {information.title.trim()}
       </TitleEditable>
     </InformationBlock>
   )
@@ -75,7 +81,13 @@ const TitleEditable = styled.h1`
 
   width: 100%;
 
-  font-size: var(--text-4-l);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+
+  :empty:before {
+    content: attr(placeholder);
+    color: var(--color-gray)
+  }
 
   :hover {
     background-color: var(--color-hover);

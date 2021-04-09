@@ -11,9 +11,9 @@ import SelectTagMenu from './SelectTagMenu'
 const CMD_KEY = '/'
 
 const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
-  const { id, tag, html } = element
+  const { id, tag, html, placeholder } = element
 
-  const [block, setBlock] = useState({ id, tag, html })
+  const [block, setBlock] = useState({ id, tag, html, placeholder })
   const [htmlBackup, setHtmlBackup] = useState(null)
 
   const [isTagMenuOpen, setIsTagMenuOpen] = useState(false)
@@ -59,12 +59,17 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   }
 
   const handleSelection = tag => {}
-  // .getBoundingClientRect()
 
   return (
     <DataBlock ref={blockRef}>
-      <BlockAction type={'plus'} onClick={() => addBlock({ id, ref: blockRef.current })} />
-      <BlockAction type={'dots'} onClick={() => setIsTagMenuOpen(!isTagMenuOpen)} />
+      <BlockAction
+        type={'plus'}
+        onClick={() => addBlock({ id, ref: blockRef.current })}
+      />
+      <BlockAction
+        type={'dots'}
+        onClick={() => setIsTagMenuOpen(!isTagMenuOpen)}
+      />
 
       {isTagMenuOpen && (
         <div ref={menuRef}>
@@ -78,8 +83,9 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         tag={block.tag}
         ref={editorRef}
         onKeyDown={onKeyDownHandler}
+        placeholder={block.placeholder}
       >
-        {block.html}
+        {block.html.trim()}
       </ContentEditable>
     </DataBlock>
   )
@@ -108,8 +114,36 @@ const ContentEditable = styled.pre`
 
   width: 100%;
 
-  font-size: ${props =>
-    props.tag === 'h1' ? 'var(--text-2xl)' : 'var(--text-base)'};
+  :empty:before {
+    content: attr(placeholder);
+    color: var(--color-gray)
+  }
+
+  ${props => {
+    if (props.tag === 'h1') {
+      return `
+        font-size: var(--text-3xl);
+        font-weight: 600;
+        margin-top: var(--spacing-l);
+      `
+    } else if (props.tag === 'h2') {
+      return `
+        font-size: var(--text-2xl);
+        font-weight: 600;
+        margin-top: var(--spacing-m);
+      `
+    } else if (props.tag === 'h3') {
+      return `
+        font-size: var(--text-xl);
+        font-weight: 600;
+        margin-top: var(--spacing-s);
+      `
+    } else {
+      return `
+        font-size: var(--text-base);
+      `
+    }
+  }}
 
   :hover {
     background-color: var(--color-hover);

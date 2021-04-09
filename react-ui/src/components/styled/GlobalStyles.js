@@ -1,11 +1,8 @@
 import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyles = createGlobalStyle`
-  * {
-    box-sizing:border-box;
-  }
   html {
-    --color-text: black;
+    --color-text: rgb(55, 53, 47);
     --color-text-inverse: white;
     --color-background: white;
     --color-gray-25: hsl(6, 0%, 95%);
@@ -35,28 +32,6 @@ const GlobalStyles = createGlobalStyle`
     --spacing-s: 1rem;
     --spacing-m: 1.5rem;
     --spacing-l: 2rem;
-  }
-  
-  body {
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 400;
-  }
-
-  h1 {
-    font-size: var(--text-3xl);
-  }
-
-  h2 {
-    font-size: var(--text-2xl);
-  }
-
-  h3 {
-    font-size: var(--text-xl);
-  }
-
-  p {
-    font-size: var(--text-base);
   }
 `
 
