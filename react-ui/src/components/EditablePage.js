@@ -42,7 +42,7 @@ const page = {
 }
 
 const EditablePage = () => {
-  const [pageInformation, setPageInformation] = useState(page.information)
+  const [information, setInformation] = useState(page.information)
   const [blocks, setBlocks] = useState(page.blocks)
   const [lastBlock, setlastBlock] = useState()
   const prevBlocks = usePrevious(blocks)
@@ -54,8 +54,7 @@ const EditablePage = () => {
     console.groupEnd()
 
     if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-      lastBlock &&
-        lastBlock.nextElementSibling.querySelector('#content-editable').focus()
+      lastBlock && lastBlock.nextElementSibling.querySelector('#content-editable').focus()
     } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
       lastBlock && setCaretToEnd(lastBlock.querySelector('#content-editable'))
     }
@@ -78,7 +77,7 @@ const EditablePage = () => {
       id: uid(),
       tag: 'p',
       html: '',
-      placeholder: 'Type \'/\' for commands',
+      placeholder: "Type '/' for commands",
     }
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
@@ -102,25 +101,27 @@ const EditablePage = () => {
 
   return (
     <Container>
-      <PageNavbar title={pageInformation.title} />
+      <PageNavbar title={information.title} />
 
-      <PageInformation>
-        <EditableInformation pageInformation={pageInformation} />
-      </PageInformation>
+      <PageScroller>
+        <PageInformation>
+          <EditableInformation information={information} />
+        </PageInformation>
 
-      <PageDivider />
+        <PageDivider />
 
-      <PageContent className="page">
-        {blocks.map(block => (
-          <EditableBlock
-            key={block.id}
-            element={block}
-            addBlock={addBlockHandler}
-            deleteBlock={deleteBlockHandler}
-            updatePage={updatePageHandler}
-          />
-        ))}
-      </PageContent>
+        <PageContent className="page">
+          {blocks.map(block => (
+            <EditableBlock
+              key={block.id}
+              element={block}
+              addBlock={addBlockHandler}
+              deleteBlock={deleteBlockHandler}
+              updatePage={updatePageHandler}
+            />
+          ))}
+        </PageContent>
+      </PageScroller>
     </Container>
   )
 }
@@ -133,8 +134,20 @@ const Container = styled.main`
   align-items: center;
   justify-content: start;
 
+  min-width: 10rem;
   width: 100%;
+  /* max-width: 100%; */
   min-height: calc(100vh - 56px - 48px);
+`
+
+const PageScroller = styled.section`
+  display: flex;
+  flex-direction: column;
+
+  min-width: 5rem;
+  max-width: 56rem;
+
+  /* padding: 0 6rem; */
 `
 
 const PageInformation = styled.article`
@@ -142,13 +155,12 @@ const PageInformation = styled.article`
   flex-direction: column;
   align-items: center;
 
-  width: 100%;
+  max-width: 100%;
   height: 10rem;
 `
 
 const PageDivider = styled.div`
-  height: 1.5rem;
-  width: 45rem;
+  height: var(--spacing-l);
 `
 
 const PageContent = styled.article`
@@ -156,10 +168,5 @@ const PageContent = styled.article`
   flex-direction: column;
   align-items: center;
 
-  width: 45rem;
-
-  /*   overflow: auto;
-  ::-webkit-scrollbar {
-    display: none;
-  } */
+  max-width: 45rem;
 `
