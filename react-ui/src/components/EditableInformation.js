@@ -4,27 +4,35 @@ import { useEditable } from 'use-editable'
 
 import useOutsideClick from '../hooks/useOutsideClick'
 
-import BlockAction from './blockAction'
+import BlockAction from './BlockAction'
 import SelectTagMenu from './SelectTagMenu'
 
-const EditableInformation = ({ pageInformation, addInformation, deleteInformation, updateInformation }) => {
-  const { id, title, cover } = pageInformation
-
-  const [information, setInformation] = useState({ id, title, cover })
+const EditableInformation = ({ information, addInformation, deleteInformation, updateInformation }) => {
+  const [header, setHeader] = useState({
+    pageId: information.id,
+    title: information.title,
+    titleLength: information.title.length,
+    cover: information.cover
+  })
   const [isTagMenuOpen, setIsTagMenuOpen] = useState(false)
 
-  const informationRef = useRef(null)
+  const headerRef = useRef(null)
   const titleRef = useRef(null)
   const menuRef = useRef(null)
 
   // effect for managing document title
   useEffect(() => {
-    document.title.trim() ? document.title = information.title : document.title = 'Untitled'
-  }, [information.title])
+    console.log(header.titleLength)
+    header.titleLength > 0 ? document.title = header.title : document.title = 'Untitled'
+  }, [header.title])
 
   // hooks for managing content editable
-  const handleUseEditable = title => {
-    setInformation(information => ({ ...information, title }))
+  const handleUseEditable = (title, position) => {
+    setHeader(header => ({
+      ...header,
+      title,
+      titleLength: position.content.length
+    }))
   }
 
   useEditable(titleRef, handleUseEditable, {
@@ -39,38 +47,38 @@ const EditableInformation = ({ pageInformation, addInformation, deleteInformatio
   const onKeyDownHandler = e => {
     if (!e.shiftKey && e.key === 'Enter') {
       e.preventDefault()
-      addBlock({
-        id,
-        ref: informationRef.current,
+      addInformation({
+        pageId: header.pageId,
+        ref: headerRef.current,
       })
     }
   }
 
   return (
-    <InformationBlock ref={informationRef}>
+    <HeaderBlock ref={headerRef}>
       <EditableWrapper>
         <TitleEditable
           id="title-editable"
           ref={titleRef}
           onKeyDown={onKeyDownHandler}
         >
-          {information.title}
+          {header.title}
         </TitleEditable>
-        {information.title.trim().length === 0 && <PlaceHolder placeholder='Untitled' />}
+        {header.titleLength === 0 && <PlaceHolder placeholder='Untitled' />}
       </EditableWrapper>
-    </InformationBlock>
+    </HeaderBlock>
   )
 }
 
 export default EditableInformation
 
-const InformationBlock = styled.article`
-  position: relative;
+const HeaderBlock = styled.header`
   display: flex;
   align-items: center;
   justify-content: center;
 
-  width: 45rem;
+  min-width: 100%;
+  max-width: 45rem;
   height: 100%;
 `
 
@@ -84,8 +92,6 @@ const TitleEditable = styled.h1`
   padding: var(--spacing-xxs);
   outline-style: none;
 
-  width: 100%;
-
   font-size: var(--text-4xl);
   font-weight: 700;
 `
@@ -96,9 +102,6 @@ const PlaceHolder = styled.div`
   z-index: -1;
   margin: var(--spacing-xxs);
   padding: var(--spacing-xxs);
-
-  width: 100%;
-  height: 100%;
 
   :empty:before {
     content: attr(placeholder);
