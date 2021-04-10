@@ -52,6 +52,16 @@ const EditableInformation = ({ information, addInformation, deleteInformation, u
         ref: headerRef.current,
       })
     }
+
+    // navigate between sections
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const firstElement = document.querySelector('.content-editable')
+      if (firstElement) {
+        firstElement.focus()
+        return
+      }
+    }
   }
 
   return (

@@ -54,9 +54,9 @@ const EditablePage = () => {
     console.groupEnd()
 
     if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-      lastBlock && lastBlock.nextElementSibling.querySelector('#content-editable').focus()
+      lastBlock && lastBlock.nextElementSibling.querySelector('.content-editable').focus()
     } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-      lastBlock && setCaretToEnd(lastBlock.querySelector('#content-editable'))
+      lastBlock && setCaretToEnd(lastBlock.querySelector('.content-editable'))
     }
   }, [lastBlock, prevBlocks])
 
@@ -77,7 +77,7 @@ const EditablePage = () => {
       id: uid(),
       tag: 'p',
       html: '',
-      placeholder: "Type '/' for commands",
+      placeholder: 'Type '/' for commands',
     }
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)

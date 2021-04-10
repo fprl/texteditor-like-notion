@@ -70,13 +70,19 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     if (e.key === 'ArrowUp') {
       e.preventDefault()
       const prevElement = blockRef.current.previousElementSibling
-      prevElement && prevElement.querySelector('#content-editable').focus()
+      if (prevElement) {
+        prevElement.querySelector('.content-editable').focus()
+        return
+      } else {
+        const headerElement = document.querySelector('#title-editable')
+        headerElement && headerElement.focus()
+      }
     }
 
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       const nextElement = blockRef.current.nextElementSibling
-      nextElement && nextElement.querySelector('#content-editable').focus()
+      nextElement && nextElement.querySelector('.content-editable').focus()
     }
   }
 
@@ -103,7 +109,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
       <EditableWrapper tag={block.tag}>
         <ContentEditable
-          id="content-editable"
+          className="content-editable"
           as={block.tag}
           tag={block.tag}
           ref={editorRef}
