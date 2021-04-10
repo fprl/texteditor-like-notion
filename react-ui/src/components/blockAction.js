@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import dots, { ReactComponent as Dots } from '../images/blocks/dots-action.svg'
 import plus, { ReactComponent as Plus } from '../images/blocks/plus-action.svg'
 
-const blockAction = ({ type, onClick }) => (
+const BlockAction = ({ type, onClick }) => (
   <Wrapper id='block-action' onClick={onClick}>
     {type === 'dots' ? (
       <Dots fill="var(--color-gray)" width="14px" heigth="14px" />
@@ -13,7 +13,7 @@ const blockAction = ({ type, onClick }) => (
   </Wrapper>
 )
 
-export default blockAction
+export default BlockAction
 
 const Wrapper = styled.div`
   width: 18px;
