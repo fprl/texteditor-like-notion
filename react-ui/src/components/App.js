@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-import noteService from '../services/notes'
+import Sidebar from './Sidebar'
+import Footer from './Footer'
 
 import EditablePage from './EditablePage'
 import NotFound from './NotFound'
 
-import Sidebar from './Sidebar'
-import Footer from './Footer'
 
 const App = () => {
   return (

@@ -46,6 +46,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   })
 
   const onKeyDownHandler = e => {
+    // core keys
     if (e.key === CMD_KEY) {
       e.preventDefault()
       setHtmlBackup(html)
@@ -63,6 +64,19 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         id: block.id,
         ref: blockRef.current,
       })
+    }
+
+    // navigate between blocks
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      const prevElement = blockRef.current.previousElementSibling
+      prevElement && prevElement.querySelector('#content-editable').focus()
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const nextElement = blockRef.current.nextElementSibling
+      nextElement && nextElement.querySelector('#content-editable').focus()
     }
   }
 
