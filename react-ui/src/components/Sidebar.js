@@ -7,24 +7,26 @@ const Sidebar = ({ children }) => {
 
   return (
     <Nav>
-      <Container
-        size={{ width }}
-        onResizeStop={(e, direction, ref, d) => {
-          setWidth(width + d.width)
-        }}
-        enable={{
-          top: false,
-          right: true,
-          bottom: false,
-          left: false,
-          topRight: false,
-          bottomRight: false,
-          bottomLeft: false,
-          topLeft: false,
-        }}
-      >
-        {children}
-      </Container>
+      <StickyNav>
+        <Container
+          size={{ width }}
+          onResizeStop={(e, direction, ref, d) => {
+            setWidth(width + d.width)
+          }}
+          enable={{
+            top: false,
+            right: true,
+            bottom: false,
+            left: false,
+            topRight: false,
+            bottomRight: false,
+            bottomLeft: false,
+            topLeft: false,
+          }}
+        >
+          {children}
+        </Container>
+      </StickyNav>
     </Nav>
   )
 }
@@ -32,6 +34,11 @@ const Sidebar = ({ children }) => {
 export default Sidebar
 
 const Nav = styled.nav`
+  position: relative;
+  display: flex;
+`
+
+const StickyNav = styled.div`
   position: sticky;
   top: 0;
   left: 0;
