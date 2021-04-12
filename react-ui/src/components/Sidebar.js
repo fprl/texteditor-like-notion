@@ -33,7 +33,7 @@ const Sidebar = ({ children }) => {
 
 export default Sidebar
 
-const Nav = styled.nav`
+const Nav = styled.aside`
   position: relative;
   display: flex;
 `
@@ -50,6 +50,7 @@ const StickyNav = styled.div`
 const Container = styled(Resizable)`
   display: flex !important;
   flex-direction: column !important;
+  gap: 1rem;
 
   min-width: 12rem !important;
   max-width: 25rem !important;
