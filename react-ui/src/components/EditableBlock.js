@@ -4,14 +4,14 @@ import styled from 'styled-components'
 import { useEditable } from 'use-editable'
 import useOutsideClick from '../hooks/useOutsideClick'
 
+import getLineInformation from '../utilities/getLineInformation'
+
 import BlockAction from './BlockAction'
 import SelectTagMenu from './SelectTagMenu'
 
 const CMD_KEY = '/'
 
 const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
-  // const { id, tag, html, placeholder } = element
-
   const [block, setBlock] = useState({
     id: element.id,
     tag: element.tag,
@@ -29,10 +29,11 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
+    const formattedHtml = text.slice(0, -1)
     setBlock(block => ({
       ...block,
       html: text,
-      htmlLength: position.content.length,
+      htmlLength: formattedHtml.length,
     }))
   }
 
@@ -49,7 +50,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     // core keys
     if (e.key === CMD_KEY) {
       e.preventDefault()
-      setHtmlBackup(html)
+      setHtmlBackup(block.html)
     }
     if (!e.shiftKey && e.key === 'Enter') {
       e.preventDefault()
@@ -68,21 +69,30 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
     // navigate between blocks
     if (e.key === 'ArrowUp') {
-      e.preventDefault()
+      const position = getLineInformation(editorRef.current)
+      const isInFirstLine = position.line === 0 ? true : false
       const prevElement = blockRef.current.previousElementSibling
-      if (prevElement) {
-        prevElement.querySelector('.content-editable').focus()
-        return
-      } else {
+
+      if (prevElement && isInFirstLine) {
+        e.preventDefault()
+        prevElement && prevElement.querySelector('.content-editable').focus()
+      } else if (!prevElement) {
         const headerElement = document.querySelector('#title-editable')
         headerElement && headerElement.focus()
       }
     }
 
     if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      const nextElement = blockRef.current.nextElementSibling
-      nextElement && nextElement.querySelector('.content-editable').focus()
+      const position = getLineInformation(editorRef.current)
+      const linesInEditable = block.html.split('\n').slice(0, -1).length
+      const linePosition = position.line
+      const isInLastLine = linesInEditable === linePosition ? true : false
+
+      if (isInLastLine) {
+        e.preventDefault()
+        const nextElement = blockRef.current.nextElementSibling
+        nextElement && nextElement.querySelector('.content-editable').focus()
+      }
     }
   }
 
@@ -134,9 +144,6 @@ const DataBlock = styled.article`
   align-content: flex-start;
   position: relative;
 
-  min-width: 100%;
-  max-width: 45rem;
-
   ${props => {
     if (props.tag === 'h1') {
       return `
@@ -179,8 +186,11 @@ const EditableWrapper = styled.div`
 
 const ContentEditable = styled.div`
   position: relative;
+
   margin: var(--spacing-xxs);
   padding: var(--spacing-xxs);
+
+  word-break: break-all;
   outline-style: none;
 
   ${props => {
