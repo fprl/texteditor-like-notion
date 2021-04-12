@@ -8,18 +8,39 @@ import Footer from './Footer'
 import EditablePage from './EditablePage'
 import NotFound from './NotFound'
 
+import servicesPages from '../services/pages'
+
+const pagesObject = servicesPages
 
 const App = () => {
+  const [pages, setPages] = useState()
+
+  useEffect(() => {
+    setPages(pagesObject)
+  }, [pages])
+
   return (
     <Router>
       <AppContainer>
         <Sidebar>
-          <Link to={'/'}>notion.clone</Link>
-          <Footer />
+          {pages && (
+            <>
+              <Link to={'/'}>notion.clone</Link>
+              {pages.map(page => (
+                <Link key={page.information.id} to={`/${page.information.id}`}>
+                  {page.information.title}
+                </Link>
+              ))}
+            </>
+          )}
         </Sidebar>
 
+        {/* <Footer /> */}
         <Switch>
-          <Route path="/" exact component={EditablePage} />
+          <Route path='/' exact component={EditablePage} />
+          <Route path='/:id'>
+            <EditablePage pages={pages}/>
+          </Route>
           <Route path="*" component={NotFound} />
           <Route path="/404" component={NotFound} />
         </Switch>
