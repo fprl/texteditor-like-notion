@@ -1,51 +1,29 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { useParams } from "react-router-dom";
 import styled from 'styled-components'
 import { usePrevious } from '../hooks'
 import { uid, setCaretToEnd } from '../utilities'
 
 import PageNavbar from './PageNavbar'
-import EditableInformation from './EditableInformation'
+import PageHeader from './PageHeader'
 import EditableBlock from './EditableBlock'
 
-const page = {
-  information: {
-    id: uid(),
-    title: 'Your first page!',
-    cover: null,
-  },
-  blocks: [
-    {
-      id: uid(),
-      html: 'First block',
-      tag: 'p',
-      placeholder: "Type '/' for commands",
-    },
-    {
-      id: uid(),
-      html: 'Second block',
-      tag: 'h1',
-      placeholder: 'Heading 1',
-    },
-    {
-      id: uid(),
-      html: 'Third block',
-      tag: 'h2',
-      placeholder: 'Heading 2',
-    },
-    {
-      id: uid(),
-      html: 'Fourth block',
-      tag: 'h3',
-      placeholder: 'Heading 3',
-    },
-  ],
-}
-
-const EditablePage = () => {
-  const [information, setInformation] = useState(page.information)
-  const [blocks, setBlocks] = useState(page.blocks)
+const EditablePage = ({ pages }) => {
+  const [information, setInformation] = useState()
+  const [blocks, setBlocks] = useState()
   const [lastBlock, setlastBlock] = useState()
   const prevBlocks = usePrevious(blocks)
+
+  const { id } = useParams()
+
+  useEffect(() => {
+    if (pages) {
+      const pageFiltered = pages.filter(page => page.information.id === id)
+      const [page] = pageFiltered
+      setInformation(page.information)
+      setBlocks(page.blocks)
+    }
+  }, [id])
 
   useEffect(() => {
     console.group('Mount')
@@ -77,7 +55,7 @@ const EditablePage = () => {
       id: uid(),
       tag: 'p',
       html: '',
-      placeholder: 'Type '/' for commands',
+      placeholder: 'Type \'/\' for commands',
     }
 
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
@@ -100,35 +78,34 @@ const EditablePage = () => {
   }
 
   return (
-    <Container>
-      <PageNavbar title={information.title} />
+    <MainContainer>
+      { information && blocks &&
+        <>
+          <PageNavbar title={information.title} />
+          <PageHeader information={information} />
+          <PageDivider />
 
-      <PageScroller>
-        <PageInformation>
-          <EditableInformation information={information} />
-        </PageInformation>
+          <PageContent className="page">
+            {blocks.map(block => (
+              <EditableBlock
+                key={block.id}
+                element={block}
+                addBlock={addBlockHandler}
+                deleteBlock={deleteBlockHandler}
+                updatePage={updatePageHandler}
+              />
+            ))}
+          </PageContent>
+        </>
+      }
 
-        <PageDivider />
-
-        <PageContent className="page">
-          {blocks.map(block => (
-            <EditableBlock
-              key={block.id}
-              element={block}
-              addBlock={addBlockHandler}
-              deleteBlock={deleteBlockHandler}
-              updatePage={updatePageHandler}
-            />
-          ))}
-        </PageContent>
-      </PageScroller>
-    </Container>
+    </MainContainer>
   )
 }
 
 export default EditablePage
 
-const Container = styled.main`
+const MainContainer = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,37 +113,17 @@ const Container = styled.main`
 
   min-width: 10rem;
   width: 100%;
-  /* max-width: 100%; */
   min-height: calc(100vh - 56px - 48px);
-`
-
-const PageScroller = styled.section`
-  display: flex;
-  flex-direction: column;
-
-  min-width: 5rem;
-  max-width: 56rem;
-
-  /* padding: 0 6rem; */
-`
-
-const PageInformation = styled.article`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  max-width: 100%;
-  height: 10rem;
 `
 
 const PageDivider = styled.div`
   height: var(--spacing-l);
 `
 
-const PageContent = styled.article`
+const PageContent = styled.section`
   display: flex;
   flex-direction: column;
-  align-items: center;
 
-  max-width: 45rem;
+  min-width: 5rem;
+  width: 50%;
 `
