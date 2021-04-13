@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
     --color-border: hsl(6, 0%, 92%);
     --color-shadow: hsl(6, 0%, 92%);
     --color-hover: hsl(6, 0%, 92%);
+    --color-hover-85: hsl(6, 0%, 85%);
     --color-primary: #2F0079;
     --color-status-success: #69CC8B;
     --color-status-error: #C00000;
@@ -19,6 +20,7 @@ const GlobalStyles = createGlobalStyle`
     --width-menu: 15rem;
     --max-width-menu: 40rem;
 
+    --text-xs: 0.70rem;
     --text-sm: 0.90rem;
     --text-base: 1rem;
     --text-lg: 1.125rem;
