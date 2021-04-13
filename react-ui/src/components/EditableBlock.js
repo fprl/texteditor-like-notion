@@ -5,6 +5,7 @@ import { useEditable } from 'use-editable'
 import useOutsideClick from '../hooks/useOutsideClick'
 
 import getLineInformation from '../utilities/getLineInformation'
+import getCaretCoordinates from '../utilities/getCaretCoordinates'
 
 import BlockAction from './BlockAction'
 import SelectTagMenu from './SelectTagMenu'
@@ -26,6 +27,17 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const blockRef = useRef(null)
   const editorRef = useRef(null)
   const menuRef = useRef(null)
+
+  console.log(block)
+
+  /* useEffect(() => {
+    if (block.htmlLength > 10) {
+      const formatedHtml = [...block.html].map((letter, i) => (i + 1) % 20 !== 0 ? letter : '↵')
+      const formattedHtmlLength = formatedHtml.slice(0, -1).length
+      console.log('formatted html: ', formatedHtml)
+      console.log('formatted html length: ', formattedHtmlLength)
+    }
+  }, [block.html]) */
 
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
@@ -84,9 +96,13 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
     if (e.key === 'ArrowDown') {
       const position = getLineInformation(editorRef.current)
-      const linesInEditable = block.html.split('\n').slice(0, -1).length
+      const linesInEditable = block.html.split('\n').slice(0, -1).length - 1
       const linePosition = position.line
-      const isInLastLine = linesInEditable === linePosition ? true : false
+      const isInLastLine =
+        linePosition === linesInEditable ||
+        (linePosition === 0 && linesInEditable === -1)
+          ? true
+          : false
 
       if (isInLastLine) {
         e.preventDefault()
@@ -102,11 +118,13 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     <DataBlock ref={blockRef} tag={block.tag}>
       <ActionsWrapper>
         <BlockAction
-          type={'plus'}
+          type="plus"
+          color="clear-gray"
           onClick={() => addBlock({ id: block.id, ref: blockRef.current })}
         />
         <BlockAction
-          type={'dots'}
+          type="six-dots"
+          color="clear-gray"
           onClick={() => setIsTagMenuOpen(!isTagMenuOpen)}
         />
       </ActionsWrapper>
