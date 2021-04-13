@@ -8,7 +8,7 @@ import PageNavbar from './PageNavbar'
 import PageHeader from './PageHeader'
 import EditableBlock from './EditableBlock'
 
-const EditablePage = ({ pages }) => {
+const EditablePage = ({ page }) => {
   const [information, setInformation] = useState()
   const [blocks, setBlocks] = useState()
   const [lastBlock, setlastBlock] = useState()
@@ -17,13 +17,11 @@ const EditablePage = ({ pages }) => {
   const { id } = useParams()
 
   useEffect(() => {
-    if (pages) {
-      const pageFiltered = pages.filter(page => page.information.id === id)
-      const [page] = pageFiltered
+    if (page) {
       setInformation(page.information)
       setBlocks(page.blocks)
     }
-  }, [id])
+  }, [page])
 
   useEffect(() => {
     console.group('Mount')
@@ -78,7 +76,7 @@ const EditablePage = ({ pages }) => {
   }
 
   return (
-    <MainContainer>
+    <PageContainer>
       { information && blocks &&
         <>
           <PageNavbar title={information.title} />
@@ -99,13 +97,13 @@ const EditablePage = ({ pages }) => {
         </>
       }
 
-    </MainContainer>
+    </PageContainer>
   )
 }
 
 export default EditablePage
 
-const MainContainer = styled.main`
+const PageContainer = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
