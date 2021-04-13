@@ -1,51 +1,51 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route, useRouteMatch, Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 
-import Sidebar from './Sidebar'
-import Footer from './Footer'
+import servicesPages from '../services/pages'
 
+import Sidebar from './Sidebar'
 import EditablePage from './EditablePage'
+import Footer from './Footer'
 import NotFound from './NotFound'
 
-import servicesPages from '../services/pages'
 
 const pagesObject = servicesPages
 
 const App = () => {
-  const [pages, setPages] = useState()
+  const [pages, setPages] = useState(pagesObject)
 
   useEffect(() => {
     setPages(pagesObject)
   }, [pages])
 
-  return (
-    <Router>
-      <AppContainer>
-        <Sidebar>
-          {pages && (
-            <>
-              <Link to={'/'}>notion.clone</Link>
-              {pages.map(page => (
-                <Link key={page.information.id} to={`/${page.information.id}`}>
-                  {page.information.title}
-                </Link>
-              ))}
-            </>
-          )}
-        </Sidebar>
+  // home redirect to last visited (now first page)
+  const linkToRedirect = `/${pages[0].information.id}`
 
-        {/* <Footer /> */}
-        <Switch>
-          <Route path='/' exact component={EditablePage} />
-          <Route path='/:id'>
-            <EditablePage pages={pages}/>
-          </Route>
-          <Route path="*" component={NotFound} />
-          <Route path="/404" component={NotFound} />
-        </Switch>
-      </AppContainer>
-    </Router>
+  // pass only the required page to the component
+  const match = useRouteMatch('/:id')
+  const page = match
+    ? pages.find(page => page.information.id === match.params.id)
+    : null
+
+  // pass only the information of the pages
+  const sideBarLinks = pages.map(p => p.information)
+
+  return (
+    <AppContainer>
+      <Sidebar links={sideBarLinks} />
+      <Switch>
+        <Route path="/:id">
+          <EditablePage page={page} />
+        </Route>
+
+        <Route path="/" exact>
+          <Redirect to={linkToRedirect} />
+        </Route>
+        <Route path="*" component={NotFound} />
+        <Route path="/404" component={NotFound} />
+      </Switch>
+    </AppContainer>
   )
 }
 
