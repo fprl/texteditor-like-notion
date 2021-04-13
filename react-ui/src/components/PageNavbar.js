@@ -30,5 +30,3 @@ const ItemsWrapper = styled.div`
   left: 0;
   right: 0;
 `
-
-const ItemWrapper = styled.div``
