@@ -40,6 +40,7 @@ const SelectTagMenu = ({ position, handleSelection }) => {
   const [size, setSize] = useState({ height: null, width: null })
 
   const menuRef = useRef()
+  const svgWidth = 16
 
   useEffect(() => {
     const height = menuRef.current.getBoundingClientRect().height
@@ -47,8 +48,17 @@ const SelectTagMenu = ({ position, handleSelection }) => {
     setSize({ ...size, height, width })
   }, [])
 
+  useEffect(() => {
+    menuRef.current.querySelector('li')
+  }, [selectedTag])
+
+  const onKeyDownHandler = () => {
+    
+  }
+
   return (
-    <Menu top={size.height / 2 - size.height} left={-size.width} ref={menuRef}>
+    <Menu top={size.height / 2 - size.height} left={-size.width - svgWidth} ref={menuRef}>
+      <MenuTitle>turn into</MenuTitle>
       <MenuList>
         {tagList.map(tag => {
           return (
@@ -66,17 +76,32 @@ const SelectTagMenu = ({ position, handleSelection }) => {
 export default SelectTagMenu
 
 const Menu = styled.div`
+  position: absolute;
   display: flex;
+  flex-direction: column;
   z-index: 100;
 
-  position: absolute;
   top: ${p => `${p.top}px`};
   left: ${p => `${p.left}px`};
 
   width: var(--width-menu);
+  border-radius: 6px;
 
   background-color: white;
   box-shadow: 2px 2px 10px 1px var(--color-shadow);
+`
+
+const MenuTitle = styled.span`
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-gray);
+  text-transform: uppercase;
+
+  user-select: none;
+
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-xxs);
+  padding: 0 var(--spacing-s);
 `
 
 const MenuList = styled.ul`
@@ -85,7 +110,7 @@ const MenuList = styled.ul`
   padding: var(--spacing-xs) 0;
 `
 
-const MenuItemWrapper = styled.div`
+const MenuItemWrapper = styled.li`
   display: flex;
   align-items: center;
 
@@ -111,6 +136,6 @@ const MenuItemImg = styled.img`
   border-radius: 5px;
 `
 
-const MenuItem = styled.li`
+const MenuItem = styled.span`
   font-size: var(--text-sm);
 `
