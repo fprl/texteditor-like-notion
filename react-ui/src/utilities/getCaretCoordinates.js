@@ -1,5 +1,5 @@
 const getCaretCoordinates = (fromStart = true) => {
-  let x, y
+  let left, top, bottom
   const isSupported = typeof window.getSelection !== 'undefined'
   if (isSupported) {
     const selection = window.getSelection()
@@ -8,12 +8,13 @@ const getCaretCoordinates = (fromStart = true) => {
       range.collapse(fromStart ? true : false)
       const rect = range.getClientRects()[0]
       if (rect) {
-        x = rect.left
-        y = rect.top
+        left = rect.left
+        top = rect.top
+        bottom = rect.bottom
       }
     }
   }
-  return { x, y }
+  return { left, top, bottom }
 }
 
 export default getCaretCoordinates
