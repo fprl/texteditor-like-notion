@@ -28,17 +28,6 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const editorRef = useRef(null)
   const menuRef = useRef(null)
 
-  console.log(block)
-
-  /* useEffect(() => {
-    if (block.htmlLength > 10) {
-      const formatedHtml = [...block.html].map((letter, i) => (i + 1) % 20 !== 0 ? letter : '↵')
-      const formattedHtmlLength = formatedHtml.slice(0, -1).length
-      console.log('formatted html: ', formatedHtml)
-      console.log('formatted html length: ', formattedHtmlLength)
-    }
-  }, [block.html]) */
-
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
     const formattedHtml = text.slice(0, -1)
@@ -57,6 +46,21 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   useOutsideClick(menuRef, () => {
     if (isTagMenuOpen) setIsTagMenuOpen(false)
   })
+
+  // get caret coordinates on selection
+  const calculateSelectionMenuPosition = () => {
+    const { x: startX, y: startY } = getCaretCoordinates(true) // fromStart
+    const { x: endX, y: endY } = getCaretCoordinates(false) // fromEnd
+    const middleX = startX + (endX - startX) / 2
+    return { x: middleX, y: startY }
+  }
+
+  // open selection menu
+  const openSelectionMenu = () => {
+    // get coordinates with above function
+    // set action menu position and open status
+    // remember to add ref for clicking outside (like other menu)
+  }
 
   const onKeyDownHandler = e => {
     // core keys
@@ -81,28 +85,32 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
     // navigate between blocks
     if (e.key === 'ArrowUp') {
-      const position = getLineInformation(editorRef.current)
-      const isInFirstLine = position.line === 0 ? true : false
-      const prevElement = blockRef.current.previousElementSibling
+      const { top: blockY } = editorRef.current.getBoundingClientRect()
+      const { top: caretY } = getCaretCoordinates()
+      const differenceBetween = caretY - blockY
 
-      if (prevElement && isInFirstLine) {
+      const isInFirstLine = differenceBetween < 1 || block.htmlLength === 0 ? true : false
+
+      if (isInFirstLine) {
         e.preventDefault()
+        const prevElement = blockRef.current.previousElementSibling
         prevElement && prevElement.querySelector('.content-editable').focus()
-      } else if (!prevElement) {
-        const headerElement = document.querySelector('#title-editable')
-        headerElement && headerElement.focus()
+        if (!prevElement) {
+          const headerElement = document.querySelector('#title-editable')
+          headerElement && headerElement.focus()
+        }
       }
     }
 
     if (e.key === 'ArrowDown') {
-      const position = getLineInformation(editorRef.current)
-      const linesInEditable = block.html.split('\n').slice(0, -1).length - 1
-      const linePosition = position.line
-      const isInLastLine =
-        linePosition === linesInEditable ||
-        (linePosition === 0 && linesInEditable === -1)
-          ? true
-          : false
+      const { bottom: blockB } = editorRef.current.getBoundingClientRect()
+      const { bottom: caretB } = getCaretCoordinates()
+      const differenceBetween = blockB - caretB
+
+      const linePosition = getLineInformation(editorRef.current).position
+      const lastCharacterIndex = block.htmlLength
+
+      const isInLastLine = differenceBetween < 1 || block.htmlLength === 0 || linePosition === lastCharacterIndex ? true : false
 
       if (isInLastLine) {
         e.preventDefault()
@@ -187,8 +195,7 @@ const ActionsWrapper = styled.div`
   position: absolute;
   display: flex;
 
-  top: 0.2rem;
-  left: -2.2rem;
+  left: -2.3rem;
 
   ${DataBlock}:hover & {
     #block-action {
@@ -200,13 +207,12 @@ const ActionsWrapper = styled.div`
 const EditableWrapper = styled.div`
   position: relative;
   width: 100%;
+
+  padding: var(--spacing-xxs) var(--spacing-xxs);
 `
 
 const ContentEditable = styled.div`
   position: relative;
-
-  margin: var(--spacing-xxs);
-  padding: var(--spacing-xxs);
 
   word-break: break-all;
   outline-style: none;
@@ -242,8 +248,7 @@ const PlaceHolder = styled.div`
   position: absolute;
   top: 0;
   z-index: -1;
-  margin: var(--spacing-xxs);
-  padding: var(--spacing-xxs);
+  margin: var(--spacing-xxs) 0;
 
   visibility: hidden;
   ${props => {
