@@ -40,7 +40,7 @@ const SelectTagMenu = ({ position, handleSelection }) => {
   const [size, setSize] = useState({ height: null, width: null })
 
   const menuRef = useRef()
-  const svgWidth = 16
+  const svgWidth = 20
 
   useEffect(() => {
     const height = menuRef.current.getBoundingClientRect().height
