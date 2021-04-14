@@ -20,7 +20,15 @@ const PageHeader = ({ information, addInformation, deleteInformation, updateInfo
   const titleRef = useRef(null)
   const menuRef = useRef(null)
 
-  // effect for managing document title
+  // effect for managing page change
+  useEffect(() => {
+    setHeader({
+      ...header,
+      ...information
+    })
+  }, [information.title])
+
+  // effect for managing document title change
   useEffect(() => {
     header.title.trim().length > 0 ? document.title = header.title : document.title = 'Untitled'
   }, [header.title])
@@ -95,11 +103,11 @@ const HeaderBlock = styled.header`
 const EditableWrapper = styled.div`
   position: relative;
   width: 100%;
+
+  padding: var(--spacing-xxs) var(--spacing-xxs);
 `
 
 const TitleEditable = styled.h1`
-  margin: var(--spacing-xxs);
-  padding: var(--spacing-xxs);
   outline-style: none;
 
   font-size: var(--text-4xl);
