@@ -6,6 +6,8 @@ import useOutsideClick from '../hooks/useOutsideClick'
 
 import getLineInformation from '../utilities/getLineInformation'
 import getCaretCoordinates from '../utilities/getCaretCoordinates'
+import { getSelectionIndex } from '../utilities/getSelectionIndex'
+import { getSelectionMiddle } from '../utilities/getSelectionMiddle'
 
 import BlockAction from './BlockAction'
 import SelectTagMenu from './SelectTagMenu'
@@ -25,44 +27,30 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const [tagMenuPosition, setTagMenuPosition] = useState({ x: null, y: null })
 
   const blockRef = useRef(null)
-  const editorRef = useRef(null)
-  const menuRef = useRef(null)
+  const editableRef = useRef(null)
+  const tagMenuRef = useRef(null)
 
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
-    const formattedHtml = text.slice(0, -1)
+    const htmlWithoutBreak = text.slice(0, -1)
     setBlock(block => ({
       ...block,
       html: text,
-      htmlLength: formattedHtml.length,
+      htmlLength: htmlWithoutBreak.length,
     }))
   }
 
-  useEditable(editorRef, handleUseEditable, {
+  useEditable(editableRef, handleUseEditable, {
     indentation: 2,
   })
 
   // hooks for clicking outside of ref (menu)
-  useOutsideClick(menuRef, () => {
+  useOutsideClick(tagMenuRef, () => {
     if (isTagMenuOpen) setIsTagMenuOpen(false)
   })
 
-  // get caret coordinates on selection
-  const calculateSelectionMenuPosition = () => {
-    const { x: startX, y: startY } = getCaretCoordinates(true) // fromStart
-    const { x: endX, y: endY } = getCaretCoordinates(false) // fromEnd
-    const middleX = startX + (endX - startX) / 2
-    return { x: middleX, y: startY }
-  }
 
-  // open selection menu
-  const openSelectionMenu = () => {
-    // get coordinates with above function
-    // set action menu position and open status
-    // remember to add ref for clicking outside (like other menu)
-  }
-
-  const onKeyDownHandler = e => {
+  const handleOnKeyDown = async e => {
     // core keys
     if (e.key === CMD_KEY) {
       e.preventDefault()
@@ -85,7 +73,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
     // navigate between blocks
     if (e.key === 'ArrowUp') {
-      const { top: blockY } = editorRef.current.getBoundingClientRect()
+      const { top: blockY } = editableRef.current.getBoundingClientRect()
       const { top: caretY } = getCaretCoordinates()
       const differenceBetween = caretY - blockY
 
@@ -103,14 +91,14 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     }
 
     if (e.key === 'ArrowDown') {
-      const { bottom: blockB } = editorRef.current.getBoundingClientRect()
+      const { bottom: blockB } = editableRef.current.getBoundingClientRect()
       const { bottom: caretB } = getCaretCoordinates()
       const differenceBetween = blockB - caretB
 
-      const linePosition = getLineInformation(editorRef.current).position
+      const caretIndex = getLineInformation(editableRef.current).position
       const lastCharacterIndex = block.htmlLength
 
-      const isInLastLine = differenceBetween < 1 || block.htmlLength === 0 || linePosition === lastCharacterIndex ? true : false
+      const isInLastLine = differenceBetween < 1 || block.htmlLength === 0 || caretIndex === lastCharacterIndex ? true : false
 
       if (isInLastLine) {
         e.preventDefault()
@@ -118,6 +106,72 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         nextElement && nextElement.querySelector('.content-editable').focus()
       }
     }
+
+    // handling ctrl + v (paste)
+    if (e.ctrlKey && e.key === 'v') {
+      e.preventDefault()
+      let formattedUserClipText
+      let formattedHtml
+
+      const userClipText = await navigator.clipboard.readText()
+      formattedUserClipText = userClipText.split('\n')
+      const userClipTextBreaks = formattedUserClipText.filter(
+        paragraph => paragraph.length !== 1
+      )
+
+      // if user paste more than one paragraph
+      if (userClipTextBreaks.length > 1) {
+        addBlock({ id: block.id, ref: blockRef.current }, userClipTextBreaks)
+      }
+
+      // normal behavior to correct the '\n' that's always present
+      if (userClipTextBreaks.length === 1) {
+        const currentHtml = block.html
+        const caretIndex = getLineInformation(editableRef.current).position
+        const lastCharacterIndex = block.htmlLength
+        const isInLastLine = caretIndex === lastCharacterIndex ? true : false
+
+        const currentHtmlWithoutBreak = currentHtml.slice(0, lastCharacterIndex)
+
+        if (isInLastLine) {
+          formattedHtml = currentHtmlWithoutBreak + userClipText + '\n'
+        } else {
+          formattedHtml =
+            currentHtmlWithoutBreak
+            + userClipText
+            + currentHtml.slice(lastCharacterIndex)
+        }
+
+        setBlock(block => ({
+          ...block,
+          html: formattedHtml,
+          htmlLength: formattedHtml.length - 1,
+        }))
+      }
+    }
+  }
+
+  const handleOnKeyUp = e => {
+    if (e.key === CMD_KEY) {
+      e.preventDefault()
+      const { left, top } = getCaretCoordinates(true)
+      console.log(left, top)
+    }
+  }
+
+  const handleMouseUp = e => {
+    const { selectionStart, selectionEnd } = getSelectionIndex(editableRef.current)
+    if (selectionStart !== selectionEnd) {
+      const { x, y } = getSelectionMiddle(editableRef.current)
+      console.log(x, y)
+    }
+  }
+
+  const openTextEditorMenu = () => {
+    console.log(e)
+    // get coordinates with getSelectionCoordinates()
+    // set action menu position and open status
+    // remember to add ref for clicking outside (like other menu)
   }
 
   const handleSelection = tag => {}
@@ -138,7 +192,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
       </ActionsWrapper>
 
       {isTagMenuOpen && (
-        <div ref={menuRef}>
+        <div ref={tagMenuRef}>
           <SelectTagMenu handleSelection={handleSelection} />
         </div>
       )}
@@ -148,8 +202,10 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
           className="content-editable"
           as={block.tag}
           tag={block.tag}
-          ref={editorRef}
-          onKeyDown={onKeyDownHandler}
+          ref={editableRef}
+          onKeyDown={handleOnKeyDown}
+          onKeyUp={handleOnKeyUp}
+          onMouseUp={handleMouseUp}
         >
           {block.html}
         </ContentEditable>
@@ -169,6 +225,8 @@ const DataBlock = styled.article`
   display: flex;
   align-content: flex-start;
   position: relative;
+
+  max-width: 38rem;
 
   ${props => {
     if (props.tag === 'h1') {
