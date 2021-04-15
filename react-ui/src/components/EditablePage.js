@@ -48,7 +48,7 @@ const EditablePage = ({ page }) => {
     setBlocks([...updatedBlock])
   }
 
-  const addBlockHandler = currentBlock => {
+  const addBlockHandler = (currentBlock, multiple) => {
     const newBlock = {
       id: uid(),
       tag: 'p',
@@ -56,12 +56,23 @@ const EditablePage = ({ page }) => {
       placeholder: 'Type \'/\' for commands',
     }
 
-    const index = blocks.map(b => b.id).indexOf(currentBlock.id)
+    const currentBlockIndex = blocks.map(b => b.id).indexOf(currentBlock.id)
     const updatedBlocks = [...blocks]
-    updatedBlocks.splice(index + 1, 0, newBlock)
 
-    setBlocks([...updatedBlocks])
-    setlastBlock(currentBlock.ref)
+    if (!multiple) {
+      updatedBlocks.splice(currentBlockIndex + 1, 0, newBlock)
+
+      setBlocks([...updatedBlocks])
+      currentBlock.ref && setlastBlock(currentBlock.ref)
+    } else if (multiple) {
+      let newBlocks = []
+      newBlocks = multiple.map(html => ({ ...newBlock, id: uid(), html }))
+
+      updatedBlocks.splice(currentBlockIndex + 1, 0, ...newBlocks)
+
+      setBlocks([...updatedBlocks])
+      currentBlock.ref && setlastBlock(currentBlock.ref)
+    }
   }
 
   const deleteBlockHandler = currentBlock => {
