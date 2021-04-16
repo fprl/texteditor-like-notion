@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
+import { useOutsideMenu } from '../hooks/useOutsideMenu'
+
 import textImage from '../images/blocks/text.png'
 import h1Image from '../images/blocks/heading_1.png'
 import h2Image from '../images/blocks/heading_2.png'
@@ -37,12 +39,14 @@ const allowedTags = [
   },
 ]
 
-const SelectTagMenu = ({ handleSelection }) => {
+const SelectTagMenu = ({ handleSelection, handleCloseMenu }) => {
   const [tagList, setTagList] = useState(allowedTags)
   const [position, setPosition] = useState({ left: null, top: null })
   const [selectedTagIndex, setSelectedTagIndex] = useState(0)
 
   const menuRef = useRef()
+
+  useOutsideMenu(menuRef, handleCloseMenu)
 
   useEffect(() => {
     const { top, left, height, width } = menuRef.current.getBoundingClientRect()
