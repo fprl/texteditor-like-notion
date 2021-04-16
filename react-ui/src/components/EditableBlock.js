@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { useEditable } from 'use-editable'
-import useOutsideClick from '../hooks/useOutsideClick'
 
 import { setCaretToEnd } from '../utilities'
 import getLineInformation from '../utilities/getLineInformation'
@@ -33,8 +32,6 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
   const blockRef = useRef(null)
   const editableRef = useRef(null)
-  const blockMenuRef = useRef(null)
-  const tagMenuRef = useRef(null)
 
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
@@ -50,19 +47,20 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     indentation: 2,
   })
 
-  // hooks for clicking outside of refs (menus)
-  useOutsideClick(blockMenuRef, () => {
-    if (blockMenu) setBlockMenu(false)
-  })
-
-  useOutsideClick(tagMenuRef, () => {
-    if (tagMenu.isOpen) setTagMenu({ ...tagMenu, isOpen: !tagMenu.isOpen })
-  })
+  // effect for closing menu after changing block tag
+  useEffect(() => {
+    blockMenu && setBlockMenu(blockMenu => !blockMenu)
+    tagMenu.isOpen && setTagMenu({ ...tagMenu, isOpen: false })
+  }, [block.tag, block.placeholder])
 
 
   const handleOnKeyDown = async e => {
     // core keys (CMD is on KeyUp)
     if (!e.shiftKey && e.key === 'Enter') {
+      if (blockMenu || tagMenu.isOpen) {
+        e.preventDefault()
+        return
+      }
       e.preventDefault()
       addBlock({
         id: block.id,
@@ -79,6 +77,10 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
     // navigate between blocks
     if (e.key === 'ArrowUp') {
+      if (blockMenu || tagMenu.isOpen) {
+        e.preventDefault()
+        return
+      }
       const { top: blockY } = editableRef.current.getBoundingClientRect()
       const { top: caretY } = getCaretCoordinates()
       const differenceBetween = caretY - blockY
@@ -97,6 +99,10 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     }
 
     if (e.key === 'ArrowDown') {
+      if (blockMenu || tagMenu.isOpen) {
+        e.preventDefault()
+        return
+      }
       const { bottom: blockB } = editableRef.current.getBoundingClientRect()
       const { bottom: caretB } = getCaretCoordinates()
       const differenceBetween = blockB - caretB
@@ -164,14 +170,8 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const handleOnKeyUp = e => {
     if (e.key === CMD_KEY) {
       e.preventDefault()
-      if (tagMenu.isOpen === true) {
-        setTagMenu({
-          ...tagMenu,
-          isOpen: false,
-        })
-      } else {
+      if (!tagMenu.isOpen) {
         const { left, top } = getCaretCoordinates(true)
-
         setHtmlBackup(block.html)
         setTagMenu({
           isOpen: true,
@@ -189,7 +189,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   }
 
   const handleTagSelection = (tag, placeholder) => {
-    if (block.tag === tag) {
+    if (tag === block.tag) {
       return
     }
 
@@ -207,6 +207,9 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     // remember to add ref for clicking outside (like other menu)
   }
 
+  const closeBlockMenu = () => setBlockMenu(false)
+  const closeTagMenu = () => setTagMenu({ ...tagMenu, isOpen: false })
+
   return (
     <DataBlock ref={blockRef} tag={block.tag}>
       <ActionsWrapper>
@@ -218,20 +221,16 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         <BlockAction
           type="six-dots"
           color="clear-gray"
-          onClick={() => setBlockMenu(!blockMenu)}
+          onClick={() => setBlockMenu(blockMenu => !blockMenu)}
         />
       </ActionsWrapper>
 
       {blockMenu && (
-        <div ref={blockMenuRef}>
-          <SelectBlockMenu handleSelection={handleTagSelection} />
-        </div>
+        <SelectBlockMenu handleSelection={handleTagSelection} handleCloseMenu={closeBlockMenu} />
       )}
 
       {tagMenu.isOpen && (
-        <div ref={tagMenuRef}>
-          <SelectTagMenu position={tagMenu.position} handleSelection={handleTagSelection} />
-        </div>
+        <SelectTagMenu position={tagMenu.position} handleCloseMenu={closeTagMenu} handleSelection={handleTagSelection} />
       )}
 
       <EditableWrapper tag={block.tag}>
