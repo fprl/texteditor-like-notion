@@ -11,58 +11,66 @@ const allowedTags = [
     id: 'paragraph',
     tag: 'p',
     label: 'Text',
+    placeholder: 'Type \'/\' for commands',
     image: textImage,
   },
   {
     id: 'page-title',
     tag: 'h1',
     label: 'Heading 1',
+    placeholder: 'Heading 1',
     image: h1Image,
   },
   {
     id: 'heading',
     tag: 'h2',
     label: 'Heading 2',
+    placeholder: 'Heading 2',
     image: h2Image,
   },
   {
     id: 'subheading',
     tag: 'h3',
     label: 'Heading 3',
+    placeholder: 'Heading 3',
     image: h3Image,
   },
 ]
 
-const SelectTagMenu = ({ position, handleSelection }) => {
+const SelectTagMenu = ({ position: pos, handleSelection }) => {
   const [tagList, setTagList] = useState(allowedTags)
-  const [selectedTag, setSelectedTag] = useState(0)
-  const [command, setCommand] = useState('')
-  const [size, setSize] = useState({ height: null, width: null })
+  const [position, setPosition] = useState({ left: null, top: null })
+  const [selectedTagIndex, setSelectedTagIndex] = useState(0)
 
   const menuRef = useRef()
-  const svgWidth = 20
 
   useEffect(() => {
-    const height = menuRef.current.getBoundingClientRect().height
-    const width = menuRef.current.getBoundingClientRect().width
-    setSize({ ...size, height, width })
+    const { top, left, height, width } = menuRef.current.getBoundingClientRect()
+    const svgWidth = 20
+
+    if (pos.left === null && pos.top === null) {
+      setPosition({
+        left: -width - svgWidth,
+        top: height / 2 - height
+      })
+    }
+
+    if (pos.left && pos.top) {
+      setPosition({
+        left: pos.left - left + svgWidth,
+        top: pos.top - top })
+    }
   }, [])
 
-  useEffect(() => {
-    menuRef.current.querySelector('li')
-  }, [selectedTag])
-
-  const onKeyDownHandler = () => {
-    
-  }
+  const onKeyDownHandler = () => {}
 
   return (
-    <Menu top={size.height / 2 - size.height} left={-size.width - svgWidth} ref={menuRef}>
+    <Menu top={position.top} left={position.left} ref={menuRef}>
       <MenuTitle>turn into</MenuTitle>
       <MenuList>
         {tagList.map(tag => {
           return (
-            <MenuItemWrapper key={tag.id} onClick={handleSelection}>
+            <MenuItemWrapper isSelected={tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null} key={tag.id} onClick={() => handleSelection(tag.tag, tag.placeholder)}>
               <MenuItemImg src={tag.image} alt={tag.id} />
               <MenuItem>{tag.label}</MenuItem>
             </MenuItemWrapper>
@@ -118,6 +126,8 @@ const MenuItemWrapper = styled.li`
 
   padding: var(--spacing-xxs) var(--spacing-s);
   cursor: pointer;
+
+  background-color: ${p => p.isSelected ? 'var(--color-hover)' : ''};
 
   :hover {
     background-color: var(--color-hover);
