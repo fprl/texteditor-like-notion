@@ -2,8 +2,6 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { useEditable } from 'use-editable'
 
-import useOutsideClick from '../hooks/useOutsideClick'
-
 import BlockAction from './BlockAction'
 import SelectTagMenu from './SelectTagMenu'
 
@@ -45,11 +43,6 @@ const PageHeader = ({ information, addInformation, deleteInformation, updateInfo
 
   useEditable(titleRef, handleUseEditable, {
     indentation: 0,
-  })
-
-  // hooks for clicking outside of ref (menu)
-  useOutsideClick(menuRef, () => {
-    if (isTagMenuOpen) setIsTagMenuOpen(false)
   })
 
   const onKeyDownHandler = e => {
