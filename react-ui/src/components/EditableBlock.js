@@ -4,12 +4,14 @@ import styled from 'styled-components'
 import { useEditable } from 'use-editable'
 import useOutsideClick from '../hooks/useOutsideClick'
 
+import { setCaretToEnd } from '../utilities'
 import getLineInformation from '../utilities/getLineInformation'
 import getCaretCoordinates from '../utilities/getCaretCoordinates'
 import { getSelectionIndex } from '../utilities/getSelectionIndex'
 import { getSelectionMiddle } from '../utilities/getSelectionMiddle'
 
 import BlockAction from './BlockAction'
+import SelectBlockMenu from './SelectBlockMenu'
 import SelectTagMenu from './SelectTagMenu'
 
 const CMD_KEY = '/'
@@ -22,21 +24,25 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     htmlLength: element.html.length,
     placeholder: element.placeholder,
   })
+  const [blockMenu, setBlockMenu] = useState(false)
+  const [tagMenu, setTagMenu] = useState({
+    isOpen: false,
+    position: { left: null, top: null },
+  })
   const [htmlBackup, setHtmlBackup] = useState(null)
-  const [isTagMenuOpen, setIsTagMenuOpen] = useState(false)
-  const [tagMenuPosition, setTagMenuPosition] = useState({ x: null, y: null })
 
   const blockRef = useRef(null)
   const editableRef = useRef(null)
+  const blockMenuRef = useRef(null)
   const tagMenuRef = useRef(null)
 
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
-    const htmlWithoutBreak = text.slice(0, -1)
+    const htmlLengthWithoutBreak = text.slice(0, -1).length
     setBlock(block => ({
       ...block,
       html: text,
-      htmlLength: htmlWithoutBreak.length,
+      htmlLength: htmlLengthWithoutBreak,
     }))
   }
 
@@ -44,18 +50,18 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     indentation: 2,
   })
 
-  // hooks for clicking outside of ref (menu)
+  // hooks for clicking outside of refs (menus)
+  useOutsideClick(blockMenuRef, () => {
+    if (blockMenu) setBlockMenu(false)
+  })
+
   useOutsideClick(tagMenuRef, () => {
-    if (isTagMenuOpen) setIsTagMenuOpen(false)
+    if (tagMenu.isOpen) setTagMenu({ ...tagMenu, isOpen: !tagMenu.isOpen })
   })
 
 
   const handleOnKeyDown = async e => {
-    // core keys
-    if (e.key === CMD_KEY) {
-      e.preventDefault()
-      setHtmlBackup(block.html)
-    }
+    // core keys (CMD is on KeyUp)
     if (!e.shiftKey && e.key === 'Enter') {
       e.preventDefault()
       addBlock({
@@ -77,10 +83,10 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
       const { top: caretY } = getCaretCoordinates()
       const differenceBetween = caretY - blockY
 
-      const isInFirstLine = differenceBetween < 1 || block.htmlLength === 0 ? true : false
+      const isInFirstLine =
+        differenceBetween < 1 || block.htmlLength === 0 ? true : false
 
       if (isInFirstLine) {
-        e.preventDefault()
         const prevElement = blockRef.current.previousElementSibling
         prevElement && prevElement.querySelector('.content-editable').focus()
         if (!prevElement) {
@@ -98,10 +104,14 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
       const caretIndex = getLineInformation(editableRef.current).position
       const lastCharacterIndex = block.htmlLength
 
-      const isInLastLine = differenceBetween < 1 || block.htmlLength === 0 || caretIndex === lastCharacterIndex ? true : false
+      const isInLastLine =
+        differenceBetween < 1 ||
+        block.htmlLength === 0 ||
+        caretIndex === lastCharacterIndex
+          ? true
+          : false
 
       if (isInLastLine) {
-        e.preventDefault()
         const nextElement = blockRef.current.nextElementSibling
         nextElement && nextElement.querySelector('.content-editable').focus()
       }
@@ -137,9 +147,9 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
           formattedHtml = currentHtmlWithoutBreak + userClipText + '\n'
         } else {
           formattedHtml =
-            currentHtmlWithoutBreak
-            + userClipText
-            + currentHtml.slice(lastCharacterIndex)
+            currentHtmlWithoutBreak +
+            userClipText +
+            currentHtml.slice(lastCharacterIndex)
         }
 
         setBlock(block => ({
@@ -154,17 +164,40 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const handleOnKeyUp = e => {
     if (e.key === CMD_KEY) {
       e.preventDefault()
-      const { left, top } = getCaretCoordinates(true)
-      console.log(left, top)
+      if (tagMenu.isOpen === true) {
+        setTagMenu({
+          ...tagMenu,
+          isOpen: false,
+        })
+      } else {
+        const { left, top } = getCaretCoordinates(true)
+
+        setHtmlBackup(block.html)
+        setTagMenu({
+          isOpen: true,
+          position: { left, top }
+        })
+      }
     }
   }
 
-  const handleMouseUp = e => {
+  const handleMouseUp = () => {
     const { selectionStart, selectionEnd } = getSelectionIndex(editableRef.current)
     if (selectionStart !== selectionEnd) {
-      const { x, y } = getSelectionMiddle(editableRef.current)
-      console.log(x, y)
+      const { left, top } = getSelectionMiddle()
     }
+  }
+
+  const handleTagSelection = (tag, placeholder) => {
+    if (block.tag === tag) {
+      return
+    }
+
+    setBlock({
+      ...block,
+      tag: tag,
+      placeholder: placeholder
+    })
   }
 
   const openTextEditorMenu = () => {
@@ -173,8 +206,6 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     // set action menu position and open status
     // remember to add ref for clicking outside (like other menu)
   }
-
-  const handleSelection = tag => {}
 
   return (
     <DataBlock ref={blockRef} tag={block.tag}>
@@ -187,13 +218,19 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
         <BlockAction
           type="six-dots"
           color="clear-gray"
-          onClick={() => setIsTagMenuOpen(!isTagMenuOpen)}
+          onClick={() => setBlockMenu(!blockMenu)}
         />
       </ActionsWrapper>
 
-      {isTagMenuOpen && (
+      {blockMenu && (
+        <div ref={blockMenuRef}>
+          <SelectBlockMenu handleSelection={handleTagSelection} />
+        </div>
+      )}
+
+      {tagMenu.isOpen && (
         <div ref={tagMenuRef}>
-          <SelectTagMenu handleSelection={handleSelection} />
+          <SelectTagMenu position={tagMenu.position} handleSelection={handleTagSelection} />
         </div>
       )}
 
@@ -243,7 +280,7 @@ const DataBlock = styled.article`
       `
     } else {
       return `
-        font-size: var(--text-base);
+        margin-top: var(--spacing-xs);
       `
     }
   }}
