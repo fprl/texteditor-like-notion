@@ -33,7 +33,7 @@ const Wrapper = styled.div`
   height: 24px;
 
   fill: ${p =>
-    p.color === 'clear-gray' ? 'var(--color-gray)' : 'var(--color-hover-85);'};
+    p.color === 'clear-gray' ? 'var(--color-gray)' : 'var(--color-hover-75);'};
 
   visibility: hidden;
   display: flex;
