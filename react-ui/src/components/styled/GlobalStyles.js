@@ -10,6 +10,7 @@ const GlobalStyles = createGlobalStyle`
     --color-border: hsl(6, 0%, 92%);
     --color-shadow: hsl(6, 0%, 92%);
     --color-hover: hsl(6, 0%, 92%);
+    --color-hover-75: hsl(6, 0%, 75%);
     --color-hover-85: hsl(6, 0%, 85%);
     --color-primary: #2F0079;
     --color-status-success: #69CC8B;
