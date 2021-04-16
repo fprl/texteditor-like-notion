@@ -2,6 +2,9 @@ import { useEffect } from 'react'
 
 const useOutsideClick = (ref, callback) => {
   const handleClick = e => {
+    if (e.key === '/') {
+      return
+    }
     if (ref.current && !ref.current.contains(e.target) || e.key === 'Escape') {
       callback()
     }
@@ -13,6 +16,7 @@ const useOutsideClick = (ref, callback) => {
 
     return () => {
       document.removeEventListener('click', handleClick)
+      document.removeEventListener('keydown', handleClick)
     }
   })
 }
