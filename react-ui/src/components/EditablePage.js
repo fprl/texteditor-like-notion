@@ -135,4 +135,6 @@ const PageContent = styled.section`
 
   min-width: 5rem;
   width: 50%;
+
+  padding-bottom: 10rem;
 `
