@@ -36,12 +36,12 @@ const Sidebar = ({ links }) => {
                       {link.title}
                       <ActionsWrapper>
                         <BlockAction
-                          type='three-dots'
+                          type='plus'
                           color='gray'
                           onClick={e => e.preventDefault()}
                         />
                         <BlockAction
-                          type='plus'
+                          type='three-dots'
                           color='gray'
                           onClick={e => e.preventDefault()}
                         />
