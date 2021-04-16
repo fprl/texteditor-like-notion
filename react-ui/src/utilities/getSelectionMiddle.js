@@ -1,10 +1,10 @@
 import getCaretCoordinates from './getCaretCoordinates'
 
 const getSelectionMiddle = () => {
-  const { x: startX, y: startY } = getCaretCoordinates(true) // fromStart
-  const { x: endX, y: endY } = getCaretCoordinates(false) // fromEnd
+  const { left: startX, top: startY } = getCaretCoordinates(true) // fromStart
+  const { left: endX, top: endY } = getCaretCoordinates(false) // fromEnd
   const middleX = startX + (endX - startX) / 2
-  return { x: middleX, y: startY }
+  return { left: middleX, top: startY }
 }
 
 export { getSelectionMiddle }
