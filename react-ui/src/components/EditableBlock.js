@@ -47,15 +47,21 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     indentation: 2,
   })
 
-  // effect for closing menu after changing block tag
+
+  // use effect for closing menus after changing block tag
   useEffect(() => {
-    blockMenu && setBlockMenu(blockMenu => !blockMenu)
-    tagMenu.isOpen && setTagMenu({ ...tagMenu, isOpen: false })
-  }, [block.tag, block.placeholder])
+    blockMenu && closeBlockMenu()
+    tagMenu.isOpen && closeTagMenu()
+  }, [block.tag])
+
+  // use effect for focus on block after closing menus
+  useEffect(() => {
+    editableRef.current.focus()
+    setCaretToEnd(editableRef.current)
+  }, [blockMenu, tagMenu.isOpen])
 
 
   const handleOnKeyDown = async e => {
-    // core keys (CMD is on KeyUp)
     if (!e.shiftKey && e.key === 'Enter') {
       if (blockMenu || tagMenu.isOpen) {
         e.preventDefault()
@@ -169,10 +175,9 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
 
   const handleOnKeyUp = e => {
     if (e.key === CMD_KEY) {
-      e.preventDefault()
+      // e.preventDefault()
       if (!tagMenu.isOpen) {
         const { left, top } = getCaretCoordinates(true)
-        setHtmlBackup(block.html)
         setTagMenu({
           isOpen: true,
           position: { left, top }
@@ -192,7 +197,6 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
     if (tag === block.tag) {
       return
     }
-
     setBlock({
       ...block,
       tag: tag,
@@ -201,14 +205,12 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   }
 
   const openTextEditorMenu = () => {
-    console.log(e)
     // get coordinates with getSelectionCoordinates()
-    // set action menu position and open status
-    // remember to add ref for clicking outside (like other menu)
   }
 
   const closeBlockMenu = () => setBlockMenu(false)
   const closeTagMenu = () => setTagMenu({ ...tagMenu, isOpen: false })
+  const closeTextEditorMenu = () => setTextEditorMenu({ ...textEditorMenu, isOpen: true })
 
   return (
     <DataBlock ref={blockRef} tag={block.tag}>
@@ -230,15 +232,16 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
       )}
 
       {tagMenu.isOpen && (
-        <SelectTagMenu position={tagMenu.position} handleCloseMenu={closeTagMenu} handleSelection={handleTagSelection} />
+        <SelectTagMenu position={tagMenu.position} handleSelection={handleTagSelection} handleCloseMenu={closeTagMenu} />
       )}
 
-      <EditableWrapper tag={block.tag}>
+      <EditableWrapper>
         <ContentEditable
           className="content-editable"
-          as={block.tag}
+          // as={block.tag}
           tag={block.tag}
           ref={editableRef}
+          data-block-id={block.id}
           onKeyDown={handleOnKeyDown}
           onKeyUp={handleOnKeyUp}
           onMouseUp={handleMouseUp}
