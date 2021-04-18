@@ -61,7 +61,7 @@ const SelectTagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
   }, [])
 
   useEffect(() => {
-    const onKeyDownHandler = e => {
+    const handleOnKeyDown = e => {
       if (e.key === 'Enter') {
         e.preventDefault()
         const { tag , placeholder } = tagList[selectedTagIndex]
@@ -84,9 +84,20 @@ const SelectTagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
       }
     }
 
-    document.addEventListener('keydown', onKeyDownHandler)
+    const handleOnKeyUp = e => {
+      if (e.key === 'Enter' || e.key === 'Escape' || e.key === 'Backspace' || e.key === '/') {
+        handleCloseMenu()
+        return
+      }
+    }
 
-    return () => document.removeEventListener('keydown', onKeyDownHandler)
+    document.addEventListener('keydown', handleOnKeyDown)
+    document.addEventListener('keydown', handleOnKeyUp)
+
+    return () => {
+      document.removeEventListener('keydown', handleOnKeyDown)
+      document.removeEventListener('keydown', handleOnKeyUp)
+    }
 
   }, [selectedTagIndex])
 
@@ -96,16 +107,16 @@ const SelectTagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
       <MenuList>
         {tagList.map(tag => {
           return (
-            <MenuItemWrapper
+            <ListItem
               isSelected={
                 tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null
               }
               key={tag.id}
               onClick={() => handleSelection(tag.tag, tag.placeholder)}
             >
-              <MenuItemImg src={tag.image} alt={tag.id} />
-              <MenuItem>{tag.label}</MenuItem>
-            </MenuItemWrapper>
+              <ItemImg src={tag.image} alt={tag.id} />
+              <ItemLabel>{tag.label}</ItemLabel>
+            </ListItem>
           )
         })}
       </MenuList>
@@ -150,7 +161,7 @@ const MenuList = styled.ul`
   padding: var(--spacing-xs) 0;
 `
 
-const MenuItemWrapper = styled.li`
+const ListItem = styled.li`
   display: flex;
   align-items: center;
 
@@ -170,7 +181,7 @@ const MenuItemWrapper = styled.li`
   }
 `
 
-const MenuItemImg = styled.img`
+const ItemImg = styled.img`
   height: 100%;
   margin-right: var(--spacing-xs);
 
@@ -178,6 +189,6 @@ const MenuItemImg = styled.img`
   border-radius: 5px;
 `
 
-const MenuItem = styled.span`
+const ItemLabel = styled.span`
   font-size: var(--text-sm);
 `
