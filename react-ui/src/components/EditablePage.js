@@ -8,7 +8,7 @@ import PageNavbar from './PageNavbar'
 import PageHeader from './PageHeader'
 import EditableBlock from './EditableBlock'
 
-const EditablePage = ({ page }) => {
+const EditablePage = ({ page, addPage }) => {
   const [information, setInformation] = useState()
   const [blocks, setBlocks] = useState()
   const [lastBlock, setlastBlock] = useState()
