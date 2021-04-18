@@ -5,7 +5,7 @@ import { Resizable } from 're-resizable'
 
 import BlockAction from './BlockAction'
 
-const Sidebar = ({ links }) => {
+const Sidebar = ({ links, addPage }) => {
   const [width, setWidth] = React.useState(192)
 
   return (
@@ -31,18 +31,25 @@ const Sidebar = ({ links }) => {
             {links && (
               <>
                 {links.map(link => (
-                  <LinkItem key={link.id} to={`/${link.id}`} activeClassName='a'>
+                  <LinkItem
+                    key={link.id}
+                    to={`/${link.id}`}
+                    activeClassName="active"
+                  >
                     <ContentWrapper>
                       {link.title}
                       <ActionsWrapper>
                         <BlockAction
-                          type='plus'
-                          color='gray'
-                          onClick={e => e.preventDefault()}
+                          type="plus"
+                          color="gray"
+                          onClick={e => {
+                            e.preventDefault()
+                            addPage(link.id)
+                          }}
                         />
                         <BlockAction
-                          type='three-dots'
-                          color='gray'
+                          type="three-dots"
+                          color="gray"
                           onClick={e => e.preventDefault()}
                         />
                       </ActionsWrapper>
@@ -52,6 +59,16 @@ const Sidebar = ({ links }) => {
               </>
             )}
           </LinksList>
+          <Button onClick={e => {
+            e.preventDefault()
+            addPage()
+          }}>
+            <BlockAction
+              type="plus"
+              color="gray"
+            />
+            New page
+          </Button>
         </ResizableContainer>
       </StickyNav>
     </Nav>
@@ -77,6 +94,7 @@ const StickyNav = styled.div`
 const ResizableContainer = styled(Resizable)`
   display: flex !important;
   flex-direction: column !important;
+  justify-content: space-between;
 
   min-width: 12rem !important;
   max-width: 25rem !important;
@@ -90,6 +108,7 @@ const ResizableContainer = styled(Resizable)`
 const LinksList = styled.ul`
   display: flex;
   flex-direction: column;
+  flex-grow: 2;
 
   width: 100%;
 `
@@ -132,5 +151,33 @@ const ActionsWrapper = styled.div`
         background-color: var(--color-gray);
       }
     }
+  }
+`
+
+const Button = styled.button`
+  display: flex;
+  align-items: center;
+  flex-grow: 0;
+
+  height: calc(var(--spacing-s) * 3);
+  padding: 0 var(--spacing-s);
+
+  border: none;
+  border-top: 1px solid var(--color-hover-85);
+
+  font-size: var(--text-sm);
+  color: var(--color-text);
+
+  div {
+    visibility: visible;
+    margin-right: var(--spacing-xs);
+
+    &:hover {
+      background-color: var(--color-hover-85);
+    }
+  }
+
+  :hover {
+    background-color: var(--color-hover-85);
   }
 `
