@@ -1,6 +1,22 @@
 import { uid } from '../utilities'
 
-const pages = [
+const newPagePrototype = {
+  information: {
+    id: uid(),
+    title: 'Untitled',
+    cover: null,
+  },
+  blocks: [
+    {
+      id: uid(),
+      html: 'First block!',
+      tag: 'p',
+      placeholder: 'Type \'/\' for commands',
+    }
+  ]
+}
+
+const initialPages = [
   {
     information: {
       id: uid(),
@@ -69,4 +85,4 @@ const pages = [
   },
 ]
 
-export default pages
+export { newPagePrototype, initialPages }
