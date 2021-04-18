@@ -1,23 +1,52 @@
 import React, { useState, useEffect } from 'react'
-import { Switch, Route, useRouteMatch, Redirect } from 'react-router-dom'
+import { Switch, Route, useRouteMatch, Redirect, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
-import servicesPages from '../services/pages'
+import { initialPages } from '../services/pages'
 
 import Sidebar from './Sidebar'
 import EditablePage from './EditablePage'
-import Footer from './Footer'
 import NotFound from './NotFound'
-
-
-const pagesObject = servicesPages
+import { uid } from '../utilities'
 
 const App = () => {
-  const [pages, setPages] = useState(pagesObject)
+  const [pages, setPages] = useState(initialPages)
+  const history = useHistory()
 
   useEffect(() => {
-    setPages(pagesObject)
-  }, [pages])
+    setPages(initialPages)
+  }, [])
+
+  const addPage = currentPageId => {
+    const newPage = {
+      information: {
+        id: uid(),
+        title: 'Untitled',
+        cover: null,
+      },
+      blocks: [
+        {
+          id: uid(),
+          html: 'First block!',
+          tag: 'p',
+          placeholder: 'Type \'/\' for commands',
+        }
+      ]
+    }
+
+    const updatedPages = [...pages]
+
+    if (currentPageId) {
+      const currentPageIndex = pages.map(page => page.information.id).indexOf(currentPageId)
+      updatedPages.splice(currentPageIndex + 1, 0, newPage)
+    } else {
+      const lastPageIndex = pages.length - 1
+      updatedPages.splice(lastPageIndex + 1, 0, newPage)
+    }
+
+    setPages([...updatedPages])
+    history.push(`/${newPage.information.id}`)
+  }
 
   // home redirect to last visited (now first page)
   const linkToRedirect = `/${pages[0].information.id}`
@@ -33,7 +62,7 @@ const App = () => {
 
   return (
     <AppContainer>
-      <Sidebar links={sideBarLinks} />
+      <Sidebar links={sideBarLinks} addPage={addPage} />
       <Switch>
         <Route path="/:id">
           <EditablePage page={page} />
