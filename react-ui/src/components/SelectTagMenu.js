@@ -112,7 +112,10 @@ const SelectTagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
                 tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null
               }
               key={tag.id}
-              onClick={() => handleSelection(tag.tag, tag.placeholder)}
+              onClick={() => {
+                handleSelection(tag.tag, tag.placeholder)
+                handleCloseMenu()
+              }}
             >
               <ItemImg src={tag.image} alt={tag.id} />
               <ItemLabel>{tag.label}</ItemLabel>
