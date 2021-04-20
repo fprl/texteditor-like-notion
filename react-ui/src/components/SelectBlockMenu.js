@@ -65,7 +65,10 @@ const SelectTagMenu = ({ handleSelection, handleCloseMenu }) => {
       <MenuList>
         {tagList.map(tag => {
           return (
-            <ListItem isSelected={tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null} key={tag.id} onClick={() => handleSelection(tag.tag, tag.placeholder)}>
+            <ListItem isSelected={tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null} key={tag.id} onClick={() => {
+              handleSelection(tag.tag, tag.placeholder)
+              handleCloseMenu()
+            }}>
               <ItemImg src={tag.image} alt={tag.id} />
               <ItemLabel>{tag.label}</ItemLabel>
             </ListItem>
