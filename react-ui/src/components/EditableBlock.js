@@ -15,7 +15,7 @@ import SelectTagMenu from './SelectTagMenu'
 
 const CMD_KEY = '/'
 
-const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
+const EditableBlock = ({ element, addBlock, deleteBlock, updateBlock }) => {
   const [block, setBlock] = useState({
     id: element.id,
     tag: element.tag,
@@ -33,6 +33,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   const blockRef = useRef(null)
   const editableRef = useRef(null)
 
+
   // hooks for managing content editable
   const handleUseEditable = (text, position) => {
     const htmlLengthWithoutBreak = text.slice(0, -1).length
@@ -48,17 +49,34 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updatePage }) => {
   })
 
 
-  // use effect for closing menus after changing block tag
+  // update block after:
+  // 1. user stop typing
   useEffect(() => {
-    blockMenu && closeBlockMenu()
-    tagMenu.isOpen && closeTagMenu()
-  }, [block.tag])
+    // SAVED FOR ASYNC UPDATE ON SERVER
+    if (!(block.html === element.html)) {
 
-  // use effect for focus on block after closing menus
+      const userTyping = setTimeout(() => {
+        console.log('running timer')
+        console.log(block.html)
+        updateBlock(block)
+      }, 300)
+
+      // cleaner will run for the previous effect before the new effect is applied
+      return () => {
+        console.log('cleaning timer')
+        clearTimeout(userTyping)
+      }
+    }
+  }, [block.html, block.id])
+
+  // 2. tag change
   useEffect(() => {
-    editableRef.current.focus()
+    if (block.htmlLength === 0) {
+      return
+    }
+    updateBlock(block)
     setCaretToEnd(editableRef.current)
-  }, [blockMenu, tagMenu.isOpen])
+  }, [block.tag, block.placeholder])
 
 
   const handleOnKeyDown = async e => {
