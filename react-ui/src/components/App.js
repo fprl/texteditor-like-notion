@@ -12,10 +12,12 @@ import { uid } from '../utilities'
 const App = () => {
   const [pages, setPages] = useState(initialPages)
   const history = useHistory()
+  const match = useRouteMatch('/page/:id')
 
   useEffect(() => {
     setPages(initialPages)
   }, [])
+
 
   const addPage = currentPageId => {
     const newPage = {
@@ -45,30 +47,42 @@ const App = () => {
     }
 
     setPages([...updatedPages])
-    history.push(`/${newPage.information.id}`)
+    history.push(`/page/${newPage.information.id}`)
+  }
+
+  const updatePage = updatedPage => {
+    const index = pages.map(page => page.information.id).indexOf(updatedPage.information.id)
+    const updatedPages = [...pages]
+    updatedPages[index] = {
+      ...updatedPages[index],
+      ...updatedPage
+    }
+    setPages([...updatedPages])
   }
 
   // home redirect to last visited (now first page)
-  const linkToRedirect = `/${pages[0].information.id}`
+  const linkToRedirect = `/page/${pages[0].information.id}`
 
   // pass only the required page to the component
-  const match = useRouteMatch('/:id')
-  const page = match
+  const activePage = match
     ? pages.find(page => page.information.id === match.params.id)
     : null
 
   // pass only the information of the pages
-  const sideBarLinks = pages.map(p => p.information)
+  const pagesLinks = pages.map(p => p.information)
 
   return (
     <AppContainer>
-      <Sidebar links={sideBarLinks} addPage={addPage} />
+      <Sidebar links={pagesLinks} addPage={addPage} />
       <Switch>
-        <Route path="/:id">
-          <EditablePage page={page} />
+        <Route path="/page/:id">
+          { match
+            ? <EditablePage page={activePage} updatePage={updatePage}/>
+            : <NotFound />
+          }
         </Route>
 
-        <Route path="/" exact>
+        <Route path='/' exact>
           <Redirect to={linkToRedirect} />
         </Route>
         <Route path="*" component={NotFound} />
