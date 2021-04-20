@@ -33,7 +33,7 @@ const Sidebar = ({ links, addPage }) => {
                 {links.map(link => (
                   <LinkItem
                     key={link.id}
-                    to={`/${link.id}`}
+                    to={`/page/${link.id}`}
                     activeClassName="active"
                   >
                     <ContentWrapper>
@@ -59,14 +59,13 @@ const Sidebar = ({ links, addPage }) => {
               </>
             )}
           </LinksList>
-          <Button onClick={e => {
-            e.preventDefault()
-            addPage()
-          }}>
-            <BlockAction
-              type="plus"
-              color="gray"
-            />
+          <Button
+            onClick={e => {
+              e.preventDefault()
+              addPage()
+            }}
+          >
+            <BlockAction type="plus" color="gray" />
             New page
           </Button>
         </ResizableContainer>
