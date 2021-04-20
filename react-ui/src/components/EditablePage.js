@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import styled from 'styled-components'
+
 import { usePrevious } from '../hooks'
 import { uid, setCaretToEnd } from '../utilities'
 
@@ -8,45 +9,39 @@ import PageNavbar from './PageNavbar'
 import PageHeader from './PageHeader'
 import EditableBlock from './EditableBlock'
 
-const EditablePage = ({ page, addPage }) => {
+const EditablePage = ({ page, updatePage }) => {
   const [information, setInformation] = useState()
   const [blocks, setBlocks] = useState()
   const [lastBlock, setlastBlock] = useState()
-  const prevBlocks = usePrevious(blocks)
+  const [lastPage, setLastPage] = useState()
 
-  const { id } = useParams()
+  const prevBlocks = usePrevious(blocks)
+  const lastPageId = useParams().id
 
   useEffect(() => {
     if (page) {
       setInformation(page.information)
       setBlocks(page.blocks)
+      setLastPage(lastPageId)
     }
   }, [page])
 
   useEffect(() => {
-    console.group('Mount')
-    console.log('previous blocks: ', prevBlocks)
-    console.log('actual blocks: ', blocks)
-    console.groupEnd()
+    const pageHasChanged = page ? page.information.id !== lastPage : false
+    if (!pageHasChanged) {
+      console.group('Mount')
+      console.log('previous blocks: ', prevBlocks)
+      console.log('actual blocks: ', blocks)
+      console.groupEnd()
 
-    if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-      lastBlock && lastBlock.nextElementSibling.querySelector('.content-editable').focus()
-    } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-      lastBlock && setCaretToEnd(lastBlock.querySelector('.content-editable'))
+      if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
+        lastBlock && lastBlock.nextElementSibling.querySelector('.content-editable').focus()
+      } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
+        lastBlock && setCaretToEnd(lastBlock.querySelector('.content-editable'))
+      }
     }
   }, [lastBlock, prevBlocks])
 
-  const updatePageHandler = updatedBlock => {
-    const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
-    const updatedBlocks = [...blocks]
-    updatedBlocks[index] = {
-      ...updatedBlocks[index],
-      tag: updatedBlock.tag,
-      html: updatedBlock.html,
-    }
-
-    setBlocks([...updatedBlock])
-  }
 
   const addBlockHandler = (currentBlock, multiple) => {
     const newBlock = {
@@ -62,17 +57,24 @@ const EditablePage = ({ page, addPage }) => {
     if (!multiple) {
       updatedBlocks.splice(currentBlockIndex + 1, 0, newBlock)
 
-      setBlocks([...updatedBlocks])
-      currentBlock.ref && setlastBlock(currentBlock.ref)
     } else if (multiple) {
       let newBlocks = []
       newBlocks = multiple.map(html => ({ ...newBlock, id: uid(), html }))
-
       updatedBlocks.splice(currentBlockIndex + 1, 0, ...newBlocks)
-
-      setBlocks([...updatedBlocks])
-      currentBlock.ref && setlastBlock(currentBlock.ref)
     }
+
+    setBlocks([...updatedBlocks])
+    currentBlock.ref && setlastBlock(currentBlock.ref)
+  }
+
+  const updateBlockHandler = updatedBlock => {
+    const index = blocks.map(b => b.id).indexOf(updatedBlock.id)
+    const updatedBlocks = [...blocks]
+    updatedBlocks[index] = {
+      ...updatedBlocks[index],
+      ...updatedBlock
+    }
+    setBlocks([...updatedBlocks])
   }
 
   const deleteBlockHandler = currentBlock => {
@@ -101,7 +103,7 @@ const EditablePage = ({ page, addPage }) => {
                 element={block}
                 addBlock={addBlockHandler}
                 deleteBlock={deleteBlockHandler}
-                updatePage={updatePageHandler}
+                updateBlock={updateBlockHandler}
               />
             ))}
           </PageContent>
