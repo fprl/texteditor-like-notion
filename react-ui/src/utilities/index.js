@@ -1,2 +1,6 @@
-export { default as uid } from './uid'
-export { default as setCaretToEnd } from './setCaretToEnd'
+export { uid } from './uid'
+export { setCaretToEnd } from './setCaretToEnd'
+export { getLineInformation } from '../utilities/getLineInformation'
+export { getCaretCoordinates } from '../utilities/getCaretCoordinates'
+export { getSelectionIndex } from '../utilities/getSelectionIndex'
+export { getSelectionMiddle } from '../utilities/getSelectionMiddle'

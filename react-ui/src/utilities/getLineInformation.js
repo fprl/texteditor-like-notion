@@ -16,4 +16,4 @@ const getLineInformation = element => {
   return { position, extent, content, line }
 }
 
-export default getLineInformation
+export { getLineInformation }

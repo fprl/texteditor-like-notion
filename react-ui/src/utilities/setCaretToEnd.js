@@ -8,4 +8,4 @@ const setCaretToEnd = element => {
   element.focus()
 }
 
-export default setCaretToEnd
+export { setCaretToEnd }

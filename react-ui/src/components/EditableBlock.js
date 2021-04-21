@@ -3,11 +3,13 @@ import styled from 'styled-components'
 
 import { useEditable } from 'use-editable'
 
-import { setCaretToEnd } from '../utilities'
-import getLineInformation from '../utilities/getLineInformation'
-import getCaretCoordinates from '../utilities/getCaretCoordinates'
-import { getSelectionIndex } from '../utilities/getSelectionIndex'
-import { getSelectionMiddle } from '../utilities/getSelectionMiddle'
+import {
+  setCaretToEnd,
+  getLineInformation,
+  getCaretCoordinates,
+  getSelectionIndex,
+  getSelectionMiddle,
+} from '../utilities'
 
 import BlockAction from './BlockAction'
 import SelectBlockMenu from './SelectBlockMenu'
@@ -49,7 +51,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updateBlock }) => {
   })
 
 
-  // update block after:
+  // update block in server after:
   // 1. user stop typing
   useEffect(() => {
     // SAVED FOR ASYNC UPDATE ON SERVER
@@ -58,7 +60,7 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updateBlock }) => {
       const userTyping = setTimeout(() => {
         console.log('running timer')
         console.log(block.html)
-        updateBlock(block)
+        // updateBlock(block)
       }, 300)
 
       // cleaner will run for the previous effect before the new effect is applied

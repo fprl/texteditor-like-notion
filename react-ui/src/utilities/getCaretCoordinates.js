@@ -17,4 +17,4 @@ const getCaretCoordinates = (fromStart = true) => {
   return { left, top, bottom }
 }
 
-export default getCaretCoordinates
+export { getCaretCoordinates }

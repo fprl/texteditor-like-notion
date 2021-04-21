@@ -1,4 +1,4 @@
-import getCaretCoordinates from './getCaretCoordinates'
+import { getCaretCoordinates } from './getCaretCoordinates'
 
 const getSelectionMiddle = () => {
   const { left: startX, top: startY } = getCaretCoordinates(true) // fromStart
