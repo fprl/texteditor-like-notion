@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
 import { usePrevious } from '../hooks'
@@ -8,6 +9,7 @@ import { uid, setCaretToEnd } from '../utilities'
 import PageNavbar from './PageNavbar'
 import PageHeader from './PageHeader'
 import EditableBlock from './EditableBlock'
+import EditableBlockCopy from './EditableBlockCopy'
 
 const EditablePage = ({ page, updatePage }) => {
   const [information, setInformation] = useState()
@@ -35,6 +37,7 @@ const EditablePage = ({ page, updatePage }) => {
       console.groupEnd()
 
       if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
+        console.dir(lastBlock)
         lastBlock && lastBlock.nextElementSibling.querySelector('.content-editable').focus()
       } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
         lastBlock && setCaretToEnd(lastBlock.querySelector('.content-editable'))
@@ -88,6 +91,21 @@ const EditablePage = ({ page, updatePage }) => {
     setlastBlock(previousBlock)
   }
 
+  const handleOnDragEnd = result => {
+    const { source, destination } = result
+    if (!destination) {
+      return
+    }
+    if (source.draggableId === destination.draggableId && source.index === destination.index) {
+      return
+    }
+
+    const updatedBlocks = [...blocks]
+    const [reorderedBlock] = updatedBlocks.splice(source.index, 1)
+    updatedBlocks.splice(destination.index, 0, reorderedBlock)
+    setBlocks([...updatedBlocks])
+  }
+
   return (
     <PageContainer>
       { information && blocks &&
@@ -96,17 +114,25 @@ const EditablePage = ({ page, updatePage }) => {
           <PageHeader information={information} />
           <PageDivider />
 
-          <PageContent className="page">
-            {blocks.map(block => (
-              <EditableBlock
-                key={block.id}
-                element={block}
-                addBlock={addBlockHandler}
-                deleteBlock={deleteBlockHandler}
-                updateBlock={updateBlockHandler}
-              />
-            ))}
-          </PageContent>
+          <DragDropContext onDragEnd={handleOnDragEnd}>
+            <Droppable droppableId='blocks'>
+              {(provided) => (
+                <BlocksList className="page" ref={provided.innerRef} {...provided.droppableProps}>
+                  {blocks.map((block, index) => (
+                    <EditableBlockCopy
+                      key={block.id}
+                      index={index}
+                      element={block}
+                      addBlock={addBlockHandler}
+                      deleteBlock={deleteBlockHandler}
+                      updateBlock={updateBlockHandler}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </BlocksList>
+              )}
+            </Droppable>
+          </DragDropContext>
         </>
       }
 
@@ -131,7 +157,7 @@ const PageDivider = styled.div`
   height: var(--spacing-l);
 `
 
-const PageContent = styled.section`
+const BlocksList = styled.ul`
   display: flex;
   flex-direction: column;
 
