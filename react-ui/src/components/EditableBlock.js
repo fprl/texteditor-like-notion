@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
 import { useEditable } from 'use-editable'
@@ -17,7 +18,7 @@ import SelectTagMenu from './SelectTagMenu'
 
 const CMD_KEY = '/'
 
-const EditableBlock = ({ element, addBlock, deleteBlock, updateBlock }) => {
+const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) => {
   const [block, setBlock] = useState({
     id: element.id,
     tag: element.tag,
@@ -233,51 +234,60 @@ const EditableBlock = ({ element, addBlock, deleteBlock, updateBlock }) => {
   const closeTextEditorMenu = () => setTextEditorMenu({ ...textEditorMenu, isOpen: true })
 
   return (
-    <DataBlock ref={blockRef} tag={block.tag}>
-      <ActionsWrapper>
-        <BlockAction
-          type="plus"
-          color="clear-gray"
-          onClick={() => addBlock({ id: block.id, ref: blockRef.current })}
-        />
-        <BlockAction
-          type="six-dots"
-          color="clear-gray"
-          onClick={() => setBlockMenu(blockMenu => !blockMenu)}
-        />
-      </ActionsWrapper>
+    <Draggable draggableId={element.id} index={index}>
+      {(provided) => (
+        <DataBlockWrapper ref={blockRef} {...provided.draggableProps}>
+          <DataBlock ref={provided.innerRef} tag={block.tag}>
+            <ActionsWrapper {...provided.dragHandleProps}>
+              <BlockAction
+                type="plus"
+                color="clear-gray"
+                onClick={() => addBlock({ id: block.id, ref: blockRef.current })}
+              />
+              <BlockAction
+                type="six-dots"
+                color="clear-gray"
+                onClick={() => setBlockMenu(blockMenu => !blockMenu)}
+              />
+            </ActionsWrapper>
 
-      {blockMenu && (
-        <SelectBlockMenu handleSelection={handleTagSelection} handleCloseMenu={closeBlockMenu} />
+            {blockMenu && (
+              <SelectBlockMenu handleSelection={handleTagSelection} handleCloseMenu={closeBlockMenu} />
+            )}
+
+            {tagMenu.isOpen && (
+              <SelectTagMenu position={tagMenu.position} handleSelection={handleTagSelection} handleCloseMenu={closeTagMenu} />
+            )}
+
+            <EditableWrapper>
+              <ContentEditable
+                className="content-editable"
+                // as={block.tag}
+                tag={block.tag}
+                ref={editableRef}
+                data-block-id={block.id}
+                onKeyDown={handleOnKeyDown}
+                onKeyUp={handleOnKeyUp}
+                onMouseUp={handleMouseUp}
+              >
+                {block.html}
+              </ContentEditable>
+
+              {block.htmlLength === 0 && (
+                <PlaceHolder tag={block.tag} placeholder={block.placeholder} />
+              )}
+            </EditableWrapper>
+          </DataBlock>
+        </DataBlockWrapper>
       )}
-
-      {tagMenu.isOpen && (
-        <SelectTagMenu position={tagMenu.position} handleSelection={handleTagSelection} handleCloseMenu={closeTagMenu} />
-      )}
-
-      <EditableWrapper>
-        <ContentEditable
-          className="content-editable"
-          // as={block.tag}
-          tag={block.tag}
-          ref={editableRef}
-          data-block-id={block.id}
-          onKeyDown={handleOnKeyDown}
-          onKeyUp={handleOnKeyUp}
-          onMouseUp={handleMouseUp}
-        >
-          {block.html}
-        </ContentEditable>
-
-        {block.htmlLength === 0 && (
-          <PlaceHolder tag={block.tag} placeholder={block.placeholder} />
-        )}
-      </EditableWrapper>
-    </DataBlock>
+    </Draggable>
   )
 }
 
 export default EditableBlock
+
+const DataBlockWrapper = styled.li`
+`
 
 const DataBlock = styled.article`
   position: relative;
