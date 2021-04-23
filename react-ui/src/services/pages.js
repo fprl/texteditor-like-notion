@@ -48,6 +48,12 @@ const initialPages = [
         tag: 'h3',
         placeholder: 'Heading 3',
       },
+      {
+        id: uid(),
+        html: 'Fifth block',
+        tag: 'code',
+        placeholder: 'Code',
+      },
     ],
   },
   {
