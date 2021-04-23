@@ -3,11 +3,11 @@ import { Switch, Route, useRouteMatch, Redirect, useHistory } from 'react-router
 import styled from 'styled-components'
 
 import { initialPages } from '../services/pages'
-
-import Sidebar from './Sidebar'
-import EditablePage from './EditablePage'
-import NotFound from './NotFound'
 import { uid } from '../utilities'
+
+import Sidebar from './Sidebar/Sidebar'
+import EditablePage from './EditablePage/EditablePage'
+import NotFound from './NotFound/NotFound'
 
 const App = () => {
   const [pages, setPages] = useState(initialPages)
