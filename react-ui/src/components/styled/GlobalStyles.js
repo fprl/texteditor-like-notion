@@ -15,6 +15,7 @@ const GlobalStyles = createGlobalStyle`
     --color-primary: #2F0079;
     --color-status-success: #69CC8B;
     --color-status-error: #C00000;
+    --color-status-active: rgb(46, 170, 220);
   
     --height-card-frame: 10rem;
     --width-container: 90%;
