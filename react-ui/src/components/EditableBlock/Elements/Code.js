@@ -1,17 +1,17 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const CodeElement = props => {
+const Code = props => {
   return (
     <pre {...props.attributes}>
-      <Code>{props.children}</Code>
+      <StyledCode>{props.children}</StyledCode>
     </pre>
   )
 }
 
-export default CodeElement
+export default Code
 
-const Code = styled.code`
+const StyledCode = styled.code`
   font-size: var(--text-sm);
   color: red;
 
