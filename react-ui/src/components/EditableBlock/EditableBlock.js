@@ -9,7 +9,7 @@ import styled from 'styled-components'
 
 import { BlockHelpers } from './utilities/blockHelpers'
 
-import { Paragraph, Heading1, Heading2, Heading3, Code } from './Elements/index'
+import { Paragraph, Heading1, Heading2, Heading3, Code, Blockquote } from './Elements/index'
 import { BlockMenu, TagMenu, SelectionMenu } from '../Menus/index'
 import Leaf from './Leaf/Leaf'
 import BlockAction from '../BlockAction/BlockAction'
@@ -24,10 +24,7 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
     placeholder: element.placeholder,
   })
   const [blockMenu, setBlockMenu] = useState(false)
-  const [tagMenu, setTagMenu] = useState({
-    isOpen: false,
-    position: { left: null, top: null },
-  })
+  const [tagMenu, setTagMenu] = useState({ isOpen: false, position: { left: null, top: null } })
   const [htmlBackup, setHtmlBackup] = useState(null)
 
   const [value, setValue] = useState([
@@ -36,8 +33,10 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
       children: [{ text: element.html }],
     },
   ])
+
+  console.log(value[0].children)
+
   const editor = useMemo(() => withReact(createEditor()), [])
-  console.log(editor)
 
   const renderElement = useCallback(props => {
     switch (props.element.type) {
@@ -49,6 +48,8 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
       return <Heading3 {...props} />
     case 'code':
       return <Code {...props} />
+    case 'block-quote':
+      return <Blockquote {...props} />
     default:
       return <Paragraph {...props} />
     }
