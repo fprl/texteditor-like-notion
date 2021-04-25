@@ -1,19 +1,9 @@
 import React from 'react'
-import { useSlate } from 'slate-react'
 import styled from 'styled-components'
 
-import { BlockHelpers } from '../../EditableBlock/utilities/blockHelpers'
-
-const Button = ({ format, children }) => {
-  const editor = useSlate()
-
-  const handleOnMouseDown = event => {
-    event.preventDefault()
-    BlockHelpers.toggleFormat(editor, format)
-  }
-
+const Button = ({ onMouseDown, children }) => {
   return (
-    <StyledButton reversed onMouseDown={handleOnMouseDown}>
+    <StyledButton reversed onMouseDown={onMouseDown}>
       {children}
     </StyledButton>
   )
