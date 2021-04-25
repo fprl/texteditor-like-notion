@@ -54,6 +54,12 @@ const initialPages = [
         tag: 'code',
         placeholder: 'Code',
       },
+      {
+        id: uid(),
+        html: 'Sixth block',
+        tag: 'block-quote',
+        placeholder: 'Block-quote',
+      },
     ],
   },
   {
