@@ -14,6 +14,14 @@ const Leaf = ({ attributes, children, leaf }) => {
     children = <u>{children}</u>
   }
 
+  if (leaf.strikethrough) {
+    children = <s>{children}</s>
+  }
+
+  if (leaf.blockquote) {
+    children = <blockquote>{children}</blockquote>
+  }
+
   return <span {...attributes}>{children}</span>
 }
 
