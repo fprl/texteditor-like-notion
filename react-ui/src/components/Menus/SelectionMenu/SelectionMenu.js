@@ -9,57 +9,85 @@ import Portal from './Portal'
 import Button from './Button'
 import Icon from './Icon'
 
+const BOLD = 'bold'
+const ITALIC = 'italic'
+const UNDERLINED = 'underlined'
+const STRIKE = 'strikethrough'
+const QUOTE = 'block-quote'
+
 const SelectionMenu = () => {
   const menuRef = useRef()
-  const editor = useSlate()
+  const currentEditableBlock = useSlate()
 
   useEffect(() => {
-    const el = menuRef.current
-    const { selection } = editor
+    const menu = menuRef.current
+    const { selection } = currentEditableBlock
 
-    if (!el) {
+    if (!menu) {
       return
     }
 
     if (
       !selection ||
-      !ReactEditor.isFocused(editor) ||
+      !ReactEditor.isFocused(currentEditableBlock) ||
       Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === ''
+      Editor.string(currentEditableBlock, selection) === ''
     ) {
-      el.removeAttribute('style')
+      menu.removeAttribute('style')
       return
     }
 
     const domSelection = window.getSelection()
     const domRange = domSelection.getRangeAt(0)
-    const rect = domRange.getBoundingClientRect()
-    el.style.opacity = '5'
-    el.style.top = `${rect.top + window.pageYOffset - el.offsetHeight}px`
-    el.style.left = `${
-      rect.left + window.pageXOffset - el.offsetWidth / 2 + rect.width / 2
+    const domRect = domRange.getBoundingClientRect()
+
+    menu.style.opacity = '5'
+    menu.style.top = `${domRect.top + window.pageYOffset - menu.offsetHeight}px`
+    menu.style.left = `${
+      domRect.left + window.pageXOffset - menu.offsetWidth / 2 + domRect.width / 2
     }px`
   })
+
+  const handleOnMouseDown = (event, format) => {
+    event.preventDefault()
+    BlockHelpers.toggleFormat(currentEditableBlock, format)
+  }
 
   return (
     <Portal>
       <StyledMenu ref={menuRef}>
-        <Button format="bold">
+        <Button onMouseDown={event => handleOnMouseDown(event, BOLD)}>
           <Icon
-            icon="format_bold"
-            active={BlockHelpers.isFormatActive(editor, 'bold')}
+            icon={BOLD}
+            active={BlockHelpers.isFormatActive(currentEditableBlock, BOLD)}
           />
         </Button>
-        <Button format="italic">
+
+        <Button onMouseDown={event => handleOnMouseDown(event, ITALIC)}>
           <Icon
-            icon="format_italic"
-            active={BlockHelpers.isFormatActive(editor, 'italic')}
+            icon={ITALIC}
+            active={BlockHelpers.isFormatActive(currentEditableBlock, ITALIC)}
           />
         </Button>
-        <Button format="underlined">
+
+        <Button onMouseDown={event => handleOnMouseDown(event, UNDERLINED)}>
           <Icon
-            icon="format_underlined"
-            active={BlockHelpers.isFormatActive(editor, 'underlined')}
+            icon={UNDERLINED}
+            active={BlockHelpers.isFormatActive(currentEditableBlock, UNDERLINED)}
+          />
+        </Button>
+
+        <Button onMouseDown={event => handleOnMouseDown(event, STRIKE)}>
+          <Icon
+            icon={STRIKE}
+            active={BlockHelpers.isFormatActive(currentEditableBlock, STRIKE)}
+          />
+        </Button>
+
+        <Button onMouseDown={event => handleOnMouseDown(event, QUOTE)}>
+          <Icon
+            icon={QUOTE}
+            active={BlockHelpers.isFormatActive(currentEditableBlock, QUOTE)}
           />
         </Button>
       </StyledMenu>
