@@ -18,11 +18,21 @@ const Leaf = ({ attributes, children, leaf }) => {
     children = <s>{children}</s>
   }
 
-  if (leaf.blockquote) {
-    children = <blockquote>{children}</blockquote>
+  if (leaf.code) {
+    children = <StyledCode>{children}</StyledCode>
   }
+
+  if (leaf.strikethrough) {
+    children = <s>{children}</s>
+  }
+
 
   return <span {...attributes}>{children}</span>
 }
 
 export default Leaf
+
+const StyledCode = styled.code`
+  color: red;
+  background-color: var(--color-hover);
+`
