@@ -11,7 +11,6 @@ const ITALIC = 'italic'
 const UNDERLINED = 'underlined'
 const STRIKE = 'strikethrough'
 const CODE = 'code'
-const QUOTE = 'block-quote'
 
 const Icon = ({ active, icon }) => {
 
