@@ -60,6 +60,24 @@ const initialPages = [
         tag: 'block-quote',
         placeholder: 'Block-quote',
       },
+      {
+        id: uid(),
+        html: 'Ordered List',
+        tag: 'ordered-list',
+        placeholder: 'Ordered list',
+      },
+      {
+        id: uid(),
+        html: 'Unordered List',
+        tag: 'unordered-list',
+        placeholder: 'Unordered list',
+      },
+      {
+        id: uid(),
+        html: '',
+        tag: 'divider',
+        placeholder: '',
+      },
     ],
   },
   {
