@@ -3,7 +3,7 @@ import { Editor, Range } from 'slate'
 import { ReactEditor, useSlate } from 'slate-react'
 import styled from 'styled-components'
 
-import { BlockHelpers } from '../../EditableBlock/utilities/blockHelpers'
+import { BlockCommands } from '../../EditableBlock/commands/blockCommands'
 
 import Portal from './Portal'
 import Button from './Button'
@@ -13,11 +13,12 @@ const BOLD = 'bold'
 const ITALIC = 'italic'
 const UNDERLINED = 'underlined'
 const STRIKE = 'strikethrough'
-const QUOTE = 'block-quote'
+const CODE = 'code'
 
 const SelectionMenu = () => {
   const menuRef = useRef()
   const currentEditableBlock = useSlate()
+  const currentEditableBlockType = currentEditableBlock.children[0].type
 
   useEffect(() => {
     const menu = menuRef.current
@@ -50,7 +51,7 @@ const SelectionMenu = () => {
 
   const handleOnMouseDown = (event, format) => {
     event.preventDefault()
-    BlockHelpers.toggleFormat(currentEditableBlock, format)
+    BlockCommands.toggleFormat(currentEditableBlock, format)
   }
 
   return (
@@ -59,37 +60,41 @@ const SelectionMenu = () => {
         <Button onMouseDown={event => handleOnMouseDown(event, BOLD)}>
           <Icon
             icon={BOLD}
-            active={BlockHelpers.isFormatActive(currentEditableBlock, BOLD)}
+            active={BlockCommands.isFormatActive(currentEditableBlock, BOLD)}
           />
         </Button>
 
         <Button onMouseDown={event => handleOnMouseDown(event, ITALIC)}>
           <Icon
             icon={ITALIC}
-            active={BlockHelpers.isFormatActive(currentEditableBlock, ITALIC)}
+            active={BlockCommands.isFormatActive(currentEditableBlock, ITALIC)}
           />
         </Button>
 
         <Button onMouseDown={event => handleOnMouseDown(event, UNDERLINED)}>
           <Icon
             icon={UNDERLINED}
-            active={BlockHelpers.isFormatActive(currentEditableBlock, UNDERLINED)}
+            active={BlockCommands.isFormatActive(currentEditableBlock, UNDERLINED)}
           />
         </Button>
 
         <Button onMouseDown={event => handleOnMouseDown(event, STRIKE)}>
           <Icon
             icon={STRIKE}
-            active={BlockHelpers.isFormatActive(currentEditableBlock, STRIKE)}
+            active={BlockCommands.isFormatActive(currentEditableBlock, STRIKE)}
           />
         </Button>
 
-        <Button onMouseDown={event => handleOnMouseDown(event, QUOTE)}>
-          <Icon
-            icon={QUOTE}
-            active={BlockHelpers.isFormatActive(currentEditableBlock, QUOTE)}
-          />
-        </Button>
+        {currentEditableBlockType === 'code' ? null : (
+          <>
+            <Button onMouseDown={event => handleOnMouseDown(event, CODE)}>
+              <Icon
+                icon={CODE}
+                active={BlockCommands.isFormatActive(currentEditableBlock, CODE)}
+              />
+            </Button>
+          </>
+        )}
       </StyledMenu>
     </Portal>
   )
