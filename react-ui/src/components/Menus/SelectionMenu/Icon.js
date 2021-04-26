@@ -4,12 +4,13 @@ import FormatBoldIcon from '@material-ui/icons/FormatBold'
 import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
 import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
-import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
+import CodeIcon from '@material-ui/icons/Code'
 
 const BOLD = 'bold'
 const ITALIC = 'italic'
 const UNDERLINED = 'underlined'
 const STRIKE = 'strikethrough'
+const CODE = 'code'
 const QUOTE = 'block-quote'
 
 const Icon = ({ active, icon }) => {
@@ -26,8 +27,8 @@ const Icon = ({ active, icon }) => {
     return <FormatUnderlinedIcon fontSize="small" style={style} />
   if (icon === STRIKE)
     return <FormatStrikethroughIcon fontSize="small" style={style} />
-  if (icon === QUOTE)
-    return <FormatQuoteIcon fontSize="small" style={style} />
+  if (icon === CODE)
+    return <CodeIcon fontSize="small" style={style} />
 }
 
 export default Icon
