@@ -13,7 +13,7 @@ import EditableBlock from '../EditableBlock/EditableBlock'
 const EditablePage = ({ page, updatePage }) => {
   const [information, setInformation] = useState()
   const [blocks, setBlocks] = useState()
-  const [lastBlock, setlastBlock] = useState()
+  const [lastBlockId, setlastBlockId] = useState()
   const [lastPage, setLastPage] = useState()
 
   const prevBlocks = usePrevious(blocks)
@@ -36,13 +36,14 @@ const EditablePage = ({ page, updatePage }) => {
       console.groupEnd()
 
       if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-        console.dir(lastBlock)
-        lastBlock && lastBlock.nextElementSibling.querySelector('.content-editable').focus()
+        const nextBlock = document.querySelector(`[data-block-id='${lastBlockId}']`).querySelector('.content-editable')
+        nextBlock && nextBlock.focus()
       } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-        lastBlock && setCaretToEnd(lastBlock.querySelector('.content-editable'))
+        const previousBlock = document.querySelector(`[data-block-id='${lastBlockId}']`).querySelector('.content-editable')
+        previousBlock && setCaretToEnd(previousBlock)
       }
     }
-  }, [lastBlock, prevBlocks])
+  }, [lastBlockId, prevBlocks])
 
 
   const addBlockHandler = (currentBlock, multiple) => {
@@ -66,7 +67,7 @@ const EditablePage = ({ page, updatePage }) => {
     }
 
     setBlocks([...updatedBlocks])
-    currentBlock.ref && setlastBlock(currentBlock.ref)
+    setlastBlockId(newBlock.id)
   }
 
   const updateBlockHandler = updatedBlock => {
@@ -80,14 +81,14 @@ const EditablePage = ({ page, updatePage }) => {
   }
 
   const deleteBlockHandler = currentBlock => {
-    const previousBlock = currentBlock.ref.previousElementSibling
-
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
+    const previousBlock = blocks[index - 1].id
+
     const updatedBlocks = [...blocks]
     updatedBlocks.splice(index, 1)
 
     setBlocks([...updatedBlocks])
-    setlastBlock(previousBlock)
+    setlastBlockId(previousBlock)
   }
 
   const handleOnDragEnd = result => {
