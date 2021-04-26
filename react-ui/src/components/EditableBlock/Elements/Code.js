@@ -12,6 +12,10 @@ const Code = props => {
 export default Code
 
 const StyledCode = styled.code`
+  display: block;
+  white-space: pre-wrap;
+  padding: var(--spacing-l);
+
   font-size: var(--text-sm);
   color: red;
 
