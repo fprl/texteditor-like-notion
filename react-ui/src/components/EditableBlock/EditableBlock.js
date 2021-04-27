@@ -8,21 +8,23 @@ import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
 import { BlockCommands } from './commands/blockCommands'
-import { withDivider, withCode } from './plugins/blockPlugins'
+import { withDivider } from './plugins/index.js'
 import { getLineInformation } from '../../utilities'
 
-import { Paragraph, Heading1, Heading2, Heading3, Code, Blockquote, UnorderedList, OrderedList, Divider } from './Elements/index'
-import { BlockMenu, TagMenu, SelectionMenu } from '../Menus/index'
+import Element from './Element/Element'
 import Leaf from './Leaf/Leaf'
 import BlockAction from '../BlockAction/BlockAction'
+import { BlockMenu, TagMenu, SelectionMenu } from '../Menus/index'
 
 const CMD_KEY = '/'
 
 const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) => {
   const [value, setValue] = useState([
     {
-      type: element.tag,
-      children: [{ text: element.html }],
+      id: element.id,
+      type: element.type,
+      children: element.children,
+      placeholder: element.placeholder
     },
   ])
 
@@ -30,34 +32,10 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
   const [tagMenu, setTagMenu] = useState({ isOpen: false, position: { left: null, top: null } })
   const [htmlBackup, setHtmlBackup] = useState(null)
 
+  const renderElement = useCallback(props => <Element {...props} />, [])
+  const renderLeaf = useCallback(props => <Leaf {...props} />, [])
   const editor = useMemo(() => withDivider(withReact(createEditor())), [])
-
-  const renderElement = useCallback(props => {
-    switch (props.element.type) {
-    case 'h1':
-      return <Heading1 {...props} />
-    case 'h2':
-      return <Heading2 {...props} />
-    case 'h3':
-      return <Heading3 {...props} />
-    case 'code':
-      return <Code {...props} />
-    case 'block-quote':
-      return <Blockquote {...props} />
-    case 'ordered-list':
-      return <OrderedList {...props} />
-    case 'unordered-list':
-      return <UnorderedList {...props} />
-    case 'divider':
-      return <Divider {...props} />
-    default:
-      return <Paragraph {...props} />
-    }
-  }, [])
-
-  const renderLeaf = useCallback(props => {
-    return <Leaf {...props} />
-  }, [])
+  console.log(editor)
 
   const handleOnKeyDown = async e => {
     if (e.shiftKey && e.key === 'Enter') {
@@ -65,7 +43,7 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
       editor.insertText('\n')
     }
 
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && value[0].type !== 'numbered-list') {
       e.preventDefault()
       const offsetEndPosition = Editor.end(editor, []).offset
       const currentOffsetPosition = editor.selection.anchor.offset
@@ -122,11 +100,13 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
     // When "B" is pressed, bold the text in the selection.
     case 'b': {
       e.preventDefault()
-      BlockCommands.toggleBoldMark(editor)
+      BlockCommands.toggleList(editor, 'numbered-list')
+      // BlockCommands.toggleBoldMark(editor)
       break
     }
     }
   }
+
 
   return (
     <Draggable draggableId={element.id} index={index}>
@@ -146,7 +126,7 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
           </ActionsWrapper>
 
           <EditableWrapper>
-            <Slate editor={editor} value={value} onChange={newValue => setValue(newValue)}>
+            <Slate editor={editor} value={value} onChange={value => setValue(value)}>
               <Editable
                 placeholder={element.placeholder}
                 className="content-editable"

@@ -1,20 +1,13 @@
 import { uid } from '../utilities'
 
-const newPagePrototype = {
-  information: {
+const blocks = [
+  {
     id: uid(),
-    title: 'Untitled',
-    cover: null,
-  },
-  blocks: [
-    {
-      id: uid(),
-      html: 'First block!',
-      tag: 'p',
-      placeholder: 'Type \'/\' for commands',
-    }
-  ]
-}
+    type: 'p',
+    children: [{ text: 'First block' }],
+    placeholder: 'Type \'/\' for commands',
+  }
+]
 
 const initialPages = [
   {
@@ -26,56 +19,56 @@ const initialPages = [
     blocks: [
       {
         id: uid(),
-        html: 'First block',
-        tag: 'p',
+        type: 'p',
+        children: [{ text: 'First block' }],
         placeholder: 'Type \'/\' for commands',
       },
       {
         id: uid(),
-        html: 'Second block',
-        tag: 'h1',
+        children: [{ text: 'Second block' }],
+        type: 'h1',
         placeholder: 'Heading 1',
       },
       {
         id: uid(),
-        html: 'Third block',
-        tag: 'h2',
+        children: [{ text: 'Third block' }],
+        type: 'h2',
         placeholder: 'Heading 2',
       },
       {
         id: uid(),
-        html: 'Fourth block',
-        tag: 'h3',
+        children: [{ text: 'Fourth block' }],
+        type: 'h3',
         placeholder: 'Heading 3',
       },
       {
         id: uid(),
-        html: 'Fifth block',
-        tag: 'code',
-        placeholder: 'Code',
+        children: [{ text: 'Fifth block' }],
+        type: 'code_block',
+        placeholder: 'Code snippet',
       },
       {
         id: uid(),
-        html: 'Sixth block',
-        tag: 'block-quote',
-        placeholder: 'Block-quote',
+        children: [{ text: 'Sixth block' }],
+        type: 'blockquote',
+        placeholder: 'Empty quote',
       },
       {
         id: uid(),
-        html: 'Ordered List',
-        tag: 'ordered-list',
-        placeholder: 'Ordered list',
+        children: [{ text: 'Ordered list' }],
+        type: 'li',
+        placeholder: 'List',
       },
       {
         id: uid(),
-        html: 'Unordered List',
-        tag: 'unordered-list',
-        placeholder: 'Unordered list',
+        children: [{ text: 'Unordered list' }],
+        type: 'ol',
+        placeholder: 'List',
       },
       {
         id: uid(),
-        html: '',
-        tag: 'divider',
+        children: [{ text: '' }],
+        type: 'divider',
         placeholder: '',
       },
     ],
@@ -89,30 +82,30 @@ const initialPages = [
     blocks: [
       {
         id: uid(),
-        html: 'A simple paragraph from second page',
-        tag: 'p',
+        type: 'p',
+        children: [{ text: 'A paragraph from second page' }],
         placeholder: 'Type \'/\' for commands',
       },
       {
         id: uid(),
-        html: 'A heading 1 from second page',
-        tag: 'h1',
-        placeholder: 'Heading 1',
+        type: 'h1',
+        children: [{ text: 'A Heading 1 from second page' }],
+        placeholder: 'Type \'/\' for commands',
       },
       {
         id: uid(),
-        html: 'Third block',
-        tag: 'h2',
-        placeholder: 'Heading 2',
+        type: 'h2',
+        children: [{ text: 'A Heading 2 from second page' }],
+        placeholder: 'Type \'/\' for commands',
       },
       {
         id: uid(),
-        html: 'Fourth block',
-        tag: 'h3',
-        placeholder: 'Heading 3',
+        type: 'h3',
+        children: [{ text: 'A Heading 3 from second page' }],
+        placeholder: 'Type \'/\' for commands',
       },
     ],
   },
 ]
 
-export { newPagePrototype, initialPages }
+export { initialPages }

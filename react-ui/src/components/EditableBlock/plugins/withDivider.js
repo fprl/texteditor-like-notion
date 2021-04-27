@@ -21,14 +21,4 @@ const withDivider = editor => {
   return editor
 }
 
-const withLink = editor => {
-  const { isInline } = editor
-
-  editor.isInline = element => {
-    return element.type === 'link' ? true : isInline(element)
-  }
-
-  return editor
-}
-
-export { withDivider, withLink }
+export default withDivider

@@ -9,6 +9,7 @@ import { uid, setCaretToEnd } from '../../utilities'
 import PageNavbar from './PageNavbar/PageNavbar'
 import PageHeader from './PageHeader/PageHeader'
 import EditableBlock from '../EditableBlock/EditableBlock'
+import EditableBlockWithPlugins from '../EditableBlock/EditableBlockWithPlugins'
 
 const EditablePage = ({ page, updatePage }) => {
   const [information, setInformation] = useState()
@@ -49,8 +50,8 @@ const EditablePage = ({ page, updatePage }) => {
   const addBlockHandler = (currentBlock, multiple) => {
     const newBlock = {
       id: uid(),
-      tag: 'p',
-      html: '',
+      type: 'p',
+      children: [{ text: '' }],
       placeholder: 'Type \'/\' for commands',
     }
 
@@ -119,7 +120,7 @@ const EditablePage = ({ page, updatePage }) => {
               {(provided) => (
                 <BlocksList className="page" ref={provided.innerRef} {...provided.droppableProps}>
                   {blocks.map((block, index) => (
-                    <EditableBlock
+                    <EditableBlockWithPlugins
                       key={block.id}
                       index={index}
                       element={block}

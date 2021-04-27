@@ -29,8 +29,8 @@ const App = () => {
       blocks: [
         {
           id: uid(),
-          html: 'First block!',
-          tag: 'p',
+          type: 'p',
+          children: [{ text: 'First block' }],
           placeholder: 'Type \'/\' for commands',
         }
       ]
