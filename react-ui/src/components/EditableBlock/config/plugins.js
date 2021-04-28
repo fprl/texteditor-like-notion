@@ -8,15 +8,24 @@ import {
   createCodeBlockPlugin,
   createHeadingPlugin,
   createListPlugin,
+  createTodoListPlugin,
+  createLinkPlugin,
+  createMediaEmbedPlugin,
   // marks
   createBoldPlugin,
   createItalicPlugin,
   createUnderlinePlugin,
   createStrikethroughPlugin,
-  createCodePlugin
+  createCodePlugin,
+  // misc
+  createResetNodePlugin,
+  createSoftBreakPlugin,
+  createExitBreakPlugin,
 } from '@udecode/slate-plugins'
 
-const pluginsBasic = [
+import { optionsResetBlockTypePlugin, optionsSoftBreakPlugin, optionsExitBreakPlugin } from './pluginsOptions'
+
+const pluginsList = [
   // editor
   createReactPlugin(), // withReact
   createHistoryPlugin(), // withHistory
@@ -27,6 +36,9 @@ const pluginsBasic = [
   createCodeBlockPlugin(), // code block element
   createHeadingPlugin(), // heading elements
   createListPlugin(), // bulleted, numbered, to-dos
+  createTodoListPlugin(), // to-do list
+  createLinkPlugin(), // link
+  createMediaEmbedPlugin(), // embeddable youTube/instagram/tweets/googlemaps
 
   // marks
   createBoldPlugin(), // bold mark
@@ -34,6 +46,11 @@ const pluginsBasic = [
   createUnderlinePlugin(), // underline mark
   createStrikethroughPlugin(), // strikethrough mark
   createCodePlugin(), // code mark
+
+  // misc
+  createResetNodePlugin(optionsResetBlockTypePlugin),
+  createSoftBreakPlugin(optionsSoftBreakPlugin),
+  createExitBreakPlugin(optionsExitBreakPlugin),
 ]
 
-export default pluginsBasic
+export default pluginsList

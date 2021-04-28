@@ -9,7 +9,6 @@ import { uid, setCaretToEnd } from '../../utilities'
 import PageNavbar from './PageNavbar/PageNavbar'
 import PageHeader from './PageHeader/PageHeader'
 import EditableBlock from '../EditableBlock/EditableBlock'
-import EditableBlockWithPlugins from '../EditableBlock/EditableBlockWithPlugins'
 
 const EditablePage = ({ page, updatePage }) => {
   const [information, setInformation] = useState()
@@ -37,17 +36,20 @@ const EditablePage = ({ page, updatePage }) => {
       console.groupEnd()
 
       if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-        const nextBlock = document.querySelector(`[data-block-id='${lastBlockId}']`).querySelector('.content-editable')
+        console.log(lastBlockId)
+        const nextBlock = document.getElementById(lastBlockId)
+        console.log(document.getElementById(`${lastBlockId}`))
+        console.log(nextBlock)
         nextBlock && nextBlock.focus()
       } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-        const previousBlock = document.querySelector(`[data-block-id='${lastBlockId}']`).querySelector('.content-editable')
-        previousBlock && setCaretToEnd(previousBlock)
+        const previousBlock = document.getElementById(lastBlockId).firstChild
+        previousBlock && previousBlock.focus()
       }
     }
   }, [lastBlockId, prevBlocks])
 
 
-  const addBlockHandler = (currentBlock, multiple) => {
+  const addBlockHandler = (currentBlock) => {
     const newBlock = {
       id: uid(),
       type: 'p',
@@ -57,15 +59,7 @@ const EditablePage = ({ page, updatePage }) => {
 
     const currentBlockIndex = blocks.map(b => b.id).indexOf(currentBlock.id)
     const updatedBlocks = [...blocks]
-
-    if (!multiple) {
-      updatedBlocks.splice(currentBlockIndex + 1, 0, newBlock)
-
-    } else if (multiple) {
-      let newBlocks = []
-      newBlocks = multiple.map(html => ({ ...newBlock, id: uid(), html }))
-      updatedBlocks.splice(currentBlockIndex + 1, 0, ...newBlocks)
-    }
+    updatedBlocks.splice(currentBlockIndex + 1, 0, newBlock)
 
     setBlocks([...updatedBlocks])
     setlastBlockId(newBlock.id)
@@ -83,7 +77,7 @@ const EditablePage = ({ page, updatePage }) => {
 
   const deleteBlockHandler = currentBlock => {
     const index = blocks.map(b => b.id).indexOf(currentBlock.id)
-    const previousBlock = blocks[index - 1].id
+    const previousBlock = index === 0 ? null : blocks[index - 1].id
 
     const updatedBlocks = [...blocks]
     updatedBlocks.splice(index, 1)
@@ -120,7 +114,7 @@ const EditablePage = ({ page, updatePage }) => {
               {(provided) => (
                 <BlocksList className="page" ref={provided.innerRef} {...provided.droppableProps}>
                   {blocks.map((block, index) => (
-                    <EditableBlockWithPlugins
+                    <EditableBlock
                       key={block.id}
                       index={index}
                       element={block}

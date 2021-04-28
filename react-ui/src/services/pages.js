@@ -67,6 +67,12 @@ const initialPages = [
       },
       {
         id: uid(),
+        children: [{ text: 'To-do list' }],
+        type: 'action-item',
+        placeholder: 'To-do',
+      },
+      {
+        id: uid(),
         children: [{ text: '' }],
         type: 'divider',
         placeholder: '',

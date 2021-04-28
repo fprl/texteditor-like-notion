@@ -1,284 +1,158 @@
-import React, { useState, useEffect, useRef } from 'react'
+// @refresh reset
+// Above code for Error: https://github.com/ianstormtaylor/slate/issues/4081
+
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
+import { Slate, Editable, withReact } from 'slate-react'
+import { createEditor, Editor } from 'slate'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
-import { useEditable } from 'use-editable'
+import { BlockCommands } from './commands/blockCommands'
+import { withDivider } from './plugins/index.js'
+import { getLineInformation } from '../../utilities'
 
-import {
-  setCaretToEnd,
-  getLineInformation,
-  getCaretCoordinates,
-  getSelectionIndex,
-  getSelectionMiddle,
-} from '../utilities'
-
-import BlockAction from './BlockAction'
-import SelectBlockMenu from './SelectBlockMenu'
-import SelectTagMenu from './SelectTagMenu'
+import Element from './Element/Element'
+import Leaf from './Leaf/Leaf'
+import BlockAction from '../BlockAction/BlockAction'
+import { BlockMenu, TagMenu, SelectionToolbar } from '../Menus/index'
 
 const CMD_KEY = '/'
 
 const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) => {
-  const [block, setBlock] = useState({
-    id: element.id,
-    tag: element.tag,
-    html: element.html,
-    htmlLength: element.html.length,
-    placeholder: element.placeholder,
-  })
+  const [value, setValue] = useState([
+    {
+      id: element.id,
+      type: element.type,
+      children: element.children,
+      placeholder: element.placeholder
+    },
+  ])
+
   const [blockMenu, setBlockMenu] = useState(false)
-  const [tagMenu, setTagMenu] = useState({
-    isOpen: false,
-    position: { left: null, top: null },
-  })
+  const [tagMenu, setTagMenu] = useState({ isOpen: false, position: { left: null, top: null } })
   const [htmlBackup, setHtmlBackup] = useState(null)
 
-  const blockRef = useRef(null)
-  const editableRef = useRef(null)
-
-
-  // hooks for managing content editable
-  const handleUseEditable = (text, position) => {
-    const htmlLengthWithoutBreak = text.slice(0, -1).length
-    setBlock(block => ({
-      ...block,
-      html: text,
-      htmlLength: htmlLengthWithoutBreak,
-    }))
-  }
-
-  useEditable(editableRef, handleUseEditable, {
-    indentation: 2,
-  })
-
-
-  // update block in server after:
-  // 1. user stop typing
-  useEffect(() => {
-    // SAVED FOR ASYNC UPDATE ON SERVER
-    if (!(block.html === element.html)) {
-
-      const userTyping = setTimeout(() => {
-        console.log('running timer')
-        console.log(block.html)
-        // updateBlock(block)
-      }, 300)
-
-      // cleaner will run for the previous effect before the new effect is applied
-      return () => {
-        console.log('cleaning timer')
-        clearTimeout(userTyping)
-      }
-    }
-  }, [block.html, block.id])
-
-  // 2. tag change
-  useEffect(() => {
-    if (block.htmlLength === 0) {
-      return
-    }
-    updateBlock(block)
-    setCaretToEnd(editableRef.current)
-  }, [block.tag, block.placeholder])
-
+  const renderElement = useCallback(props => <Element {...props} />, [])
+  const renderLeaf = useCallback(props => <Leaf {...props} />, [])
+  const editor = useMemo(() => withDivider(withReact(createEditor())), [])
+  console.log(editor)
 
   const handleOnKeyDown = async e => {
-    if (!e.shiftKey && e.key === 'Enter') {
-      if (blockMenu || tagMenu.isOpen) {
-        e.preventDefault()
-        return
-      }
+    if (e.shiftKey && e.key === 'Enter') {
       e.preventDefault()
-      addBlock({
-        id: block.id,
-        ref: blockRef.current,
-      })
-    }
-    if (e.key === 'Backspace' && block.htmlLength === 0) {
-      e.preventDefault()
-      deleteBlock({
-        id: block.id,
-        ref: blockRef.current,
-      })
+      editor.insertText('\n')
     }
 
-    // navigate between blocks
-    if (e.key === 'ArrowUp') {
-      if (blockMenu || tagMenu.isOpen) {
-        e.preventDefault()
-        return
+    if (e.key === 'Enter' && value[0].type !== 'numbered-list') {
+      e.preventDefault()
+      const offsetEndPosition = Editor.end(editor, []).offset
+      const currentOffsetPosition = editor.selection.anchor.offset
+      const isCaretAtEnd = offsetEndPosition === currentOffsetPosition ? true : false
+
+      if (!isCaretAtEnd && element.tag === 'code') {
+        Editor.insertText(editor, '\n')
       }
-      const { top: blockY } = editableRef.current.getBoundingClientRect()
-      const { top: caretY } = getCaretCoordinates()
-      const differenceBetween = caretY - blockY
 
-      const isInFirstLine =
-        differenceBetween < 1 || block.htmlLength === 0 ? true : false
+      if (isCaretAtEnd) {
+        addBlock({ id: element.id })
+      }
+    }
 
-      if (isInFirstLine) {
-        const prevElement = blockRef.current.previousElementSibling
-        prevElement && prevElement.querySelector('.content-editable').focus()
-        if (!prevElement) {
+    if (e.key === 'Backspace' || e.key === 'Delete') {
+      const editableLength = BlockCommands.getEditableLength(editor)
+      if (editableLength === 0) {
+        e.preventDefault()
+        deleteBlock({ id: element.id })
+      }
+    }
+
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      const editableLength = BlockCommands.getEditableLength(editor)
+      const actualBlock = document.querySelector(`[data-block-id='${element.id}']`)
+      const caretIndex = getLineInformation(actualBlock).position
+      if (caretIndex === 0 || editableLength === 0) {
+        const actualBlock = document.querySelector(`[data-block-id='${element.id}']`)
+        const previousBlock = actualBlock.previousElementSibling
+        previousBlock && previousBlock.querySelector('.content-editable').focus()
+        if (!previousBlock) {
           const headerElement = document.querySelector('#title-editable')
           headerElement && headerElement.focus()
         }
       }
     }
 
-    if (e.key === 'ArrowDown') {
-      if (blockMenu || tagMenu.isOpen) {
-        e.preventDefault()
-        return
-      }
-      const { bottom: blockB } = editableRef.current.getBoundingClientRect()
-      const { bottom: caretB } = getCaretCoordinates()
-      const differenceBetween = blockB - caretB
-
-      const caretIndex = getLineInformation(editableRef.current).position
-      const lastCharacterIndex = block.htmlLength
-
-      const isInLastLine =
-        differenceBetween < 1 ||
-        block.htmlLength === 0 ||
-        caretIndex === lastCharacterIndex
-          ? true
-          : false
-
-      if (isInLastLine) {
-        const nextElement = blockRef.current.nextElementSibling
-        nextElement && nextElement.querySelector('.content-editable').focus()
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+      const editableLength = BlockCommands.getEditableLength(editor)
+      const actualBlock = document.querySelector(`[data-block-id='${element.id}']`)
+      const caretIndex = getLineInformation(actualBlock).position
+      if (caretIndex === editableLength || editableLength === 0) {
+        const actualBlock = document.querySelector(`[data-block-id='${element.id}']`)
+        const nextBlock = actualBlock.nextElementSibling
+        nextBlock && nextBlock.querySelector('.content-editable').focus()
       }
     }
 
-    // handling ctrl + v (paste)
-    if (e.ctrlKey && e.key === 'v') {
-      e.preventDefault()
-      let formattedUserClipText
-      let formattedHtml
-
-      const userClipText = await navigator.clipboard.readText()
-      formattedUserClipText = userClipText.split('\n')
-      const userClipTextBreaks = formattedUserClipText.filter(
-        paragraph => paragraph.length !== 1
-      )
-
-      // if user paste more than one paragraph
-      if (userClipTextBreaks.length > 1) {
-        addBlock({ id: block.id, ref: blockRef.current }, userClipTextBreaks)
-      }
-
-      // normal behavior to correct the '\n' that's always present
-      if (userClipTextBreaks.length === 1) {
-        const currentHtml = block.html
-        const caretIndex = getLineInformation(editableRef.current).position
-        const lastCharacterIndex = block.htmlLength
-        const isInLastLine = caretIndex === lastCharacterIndex ? true : false
-
-        const currentHtmlWithoutBreak = currentHtml.slice(0, lastCharacterIndex)
-
-        if (isInLastLine) {
-          formattedHtml = currentHtmlWithoutBreak + userClipText + '\n'
-        } else {
-          formattedHtml =
-            currentHtmlWithoutBreak +
-            userClipText +
-            currentHtml.slice(lastCharacterIndex)
-        }
-
-        setBlock(block => ({
-          ...block,
-          html: formattedHtml,
-          htmlLength: formattedHtml.length - 1,
-        }))
-      }
-    }
-  }
-
-  const handleOnKeyUp = e => {
-    if (e.key === CMD_KEY) {
-      // e.preventDefault()
-      if (!tagMenu.isOpen) {
-        const { left, top } = getCaretCoordinates(true)
-        setTagMenu({
-          isOpen: true,
-          position: { left, top }
-        })
-      }
-    }
-  }
-
-  const handleMouseUp = () => {
-    const { selectionStart, selectionEnd } = getSelectionIndex(editableRef.current)
-    if (selectionStart !== selectionEnd) {
-      const { left, top } = getSelectionMiddle()
-    }
-  }
-
-  const handleTagSelection = (tag, placeholder) => {
-    if (tag === block.tag) {
+    if (!e.ctrlKey) {
       return
     }
-    setBlock({
-      ...block,
-      tag: tag,
-      placeholder: placeholder
-    })
+
+    switch (e.key) {
+    // When "B" is pressed, bold the text in the selection.
+    case 'b': {
+      e.preventDefault()
+      BlockCommands.toggleList(editor, 'numbered-list')
+      // BlockCommands.toggleBoldMark(editor)
+      break
+    }
+    }
   }
 
-  const openTextEditorMenu = () => {
-    // get coordinates with getSelectionCoordinates()
-  }
-
-  const closeBlockMenu = () => setBlockMenu(false)
-  const closeTagMenu = () => setTagMenu({ ...tagMenu, isOpen: false })
-  const closeTextEditorMenu = () => setTextEditorMenu({ ...textEditorMenu, isOpen: true })
 
   return (
     <Draggable draggableId={element.id} index={index}>
       {(provided) => (
-        <DataBlockWrapper ref={blockRef} {...provided.draggableProps}>
-          <DataBlock ref={provided.innerRef} tag={block.tag}>
-            <ActionsWrapper {...provided.dragHandleProps}>
-              <BlockAction
-                type="plus"
-                color="clear-gray"
-                onClick={() => addBlock({ id: block.id, ref: blockRef.current })}
-              />
-              <BlockAction
-                type="six-dots"
-                color="clear-gray"
-                onClick={() => setBlockMenu(blockMenu => !blockMenu)}
-              />
-            </ActionsWrapper>
+        <DataBlock tag={element.tag} data-block-id={element.id} ref={provided.innerRef} {...provided.draggableProps}>
+          <ActionsWrapper {...provided.dragHandleProps}>
+            <BlockAction
+              type="plus"
+              color="clear-gray"
+              onClick={() => addBlock({ id: element.id })}
+            />
+            <BlockAction
+              type="six-dots"
+              color="clear-gray"
+              onClick={() => setBlockMenu(blockMenu => !blockMenu)}
+            />
+          </ActionsWrapper>
 
-            {blockMenu && (
-              <SelectBlockMenu handleSelection={handleTagSelection} handleCloseMenu={closeBlockMenu} />
-            )}
-
-            {tagMenu.isOpen && (
-              <SelectTagMenu position={tagMenu.position} handleSelection={handleTagSelection} handleCloseMenu={closeTagMenu} />
-            )}
-
-            <EditableWrapper>
-              <ContentEditable
+          <EditableWrapper>
+            <Slate editor={editor} value={value} onChange={value => setValue(value)}>
+              <Editable
+                placeholder={element.placeholder}
                 className="content-editable"
-                // as={block.tag}
-                tag={block.tag}
-                ref={editableRef}
-                data-block-id={block.id}
+                renderElement={renderElement}
+                renderLeaf={renderLeaf}
                 onKeyDown={handleOnKeyDown}
-                onKeyUp={handleOnKeyUp}
-                onMouseUp={handleMouseUp}
-              >
-                {block.html}
-              </ContentEditable>
+              />
+              <SelectionMenu />
+            </Slate>
+          </EditableWrapper>
 
-              {block.htmlLength === 0 && (
-                <PlaceHolder tag={block.tag} placeholder={block.placeholder} />
-              )}
-            </EditableWrapper>
-          </DataBlock>
-        </DataBlockWrapper>
+
+          {blockMenu && (
+            <BlockMenu
+              handleSelection={handleTagSelection}
+              handleCloseMenu={closeBlockMenu}
+            />
+          )}
+          {tagMenu.isOpen && (
+            <TagMenu
+              position={tagMenu.position}
+              handleSelection={handleTagSelection}
+              handleCloseMenu={closeTagMenu}
+            />
+          )}
+        </DataBlock>
       )}
     </Draggable>
   )
@@ -286,8 +160,6 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
 
 export default EditableBlock
 
-const DataBlockWrapper = styled.li`
-`
 
 const DataBlock = styled.article`
   position: relative;
@@ -336,79 +208,4 @@ const EditableWrapper = styled.div`
   width: 100%;
 
   padding: var(--spacing-xxs) var(--spacing-xxs);
-`
-
-const ContentEditable = styled.div`
-  position: relative;
-
-  word-break: break-all;
-  outline-style: none;
-
-  ${props => {
-    if (props.tag === 'h1') {
-      return `
-        font-size: var(--text-3xl);
-        font-weight: 600;
-      `
-    } else if (props.tag === 'h2') {
-      return `
-        font-size: var(--text-2xl);
-        font-weight: 600;
-      `
-    } else if (props.tag === 'h3') {
-      return `
-        font-size: var(--text-xl);
-        font-weight: 600;
-      `
-    } else {
-      return `
-      `
-    }
-  }}
-
-  :focus ~ div {
-    visibility: visible;
-  }
-`
-
-const PlaceHolder = styled.div`
-  position: absolute;
-  top: 0;
-  z-index: -1;
-  margin: var(--spacing-xxs) 0;
-
-  visibility: hidden;
-  ${props => {
-    if (props.tag !== 'p') {
-      return `
-        visibility: visible;
-      `
-    }
-  }}
-
-  :empty:before {
-    content: attr(placeholder);
-    color: var(--color-gray);
-    ${props => {
-      if (props.tag === 'h1') {
-        return `
-        font-size: var(--text-3xl);
-        font-weight: 600;
-      `
-      } else if (props.tag === 'h2') {
-        return `
-        font-size: var(--text-2xl);
-        font-weight: 600;
-      `
-      } else if (props.tag === 'h3') {
-        return `
-        font-size: var(--text-xl);
-        font-weight: 600;
-      `
-      } else {
-        return `
-      `
-      }
-    }}
-  }
 `
