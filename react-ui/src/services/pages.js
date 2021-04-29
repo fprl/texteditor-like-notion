@@ -44,13 +44,13 @@ const initialPages = [
       {
         id: uid(),
         children: [{ text: 'Fifth block' }],
-        type: 'code_block',
+        type: 'code',
         placeholder: 'Code snippet',
       },
       {
         id: uid(),
         children: [{ text: 'Sixth block' }],
-        type: 'blockquote',
+        type: 'block-quote',
         placeholder: 'Empty quote',
       },
       {
@@ -62,14 +62,8 @@ const initialPages = [
       {
         id: uid(),
         children: [{ text: 'Unordered list' }],
-        type: 'ol',
+        type: 'li',
         placeholder: 'List',
-      },
-      {
-        id: uid(),
-        children: [{ text: 'To-do list' }],
-        type: 'action-item',
-        placeholder: 'To-do',
       },
       {
         id: uid(),
