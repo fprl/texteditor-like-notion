@@ -294,14 +294,14 @@ export const initialValuePasteHtml = [
     children: [
       {
         text:
-          "By default, pasting content into a Slate editor will use the clipboard's ",
+          'By default, pasting content into a Slate editor will use the clipboard\'s ',
       },
-      { text: "'text/plain'", code: true },
+      { text: '\'text/plain\'', code: true },
       {
         text:
-          " data. That's okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle ",
+          ' data. That\'s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle ',
       },
-      { text: "'text/html'", code: true },
+      { text: '\'text/html\'', code: true },
       { text: ' data. ' },
     ],
   },
@@ -314,7 +314,7 @@ export const initialValuePasteHtml = [
     children: [
       {
         text:
-          "Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it's formatting should be preserved.",
+          'Try it out for yourself! Copy and paste some rendered HTML rich text content (not the source code) from another site into this editor and it\'s formatting should be preserved.',
       },
     ],
   },
@@ -334,14 +334,14 @@ export const initialValuePasteMd = [
     children: [
       {
         text:
-          "By default, pasting content into a Slate editor will use the clipboard's ",
+          'By default, pasting content into a Slate editor will use the clipboard\'s ',
       },
-      { text: "'text/plain'", code: true },
+      { text: '\'text/plain\'', code: true },
       {
         text:
-          " data. That's okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle ",
+          ' data. That\'s okay for some use cases, but sometimes you want users to be able to paste in content and have it maintain its formatting. To do this, your editor needs to handle ',
       },
-      { text: "'text/html'", code: true },
+      { text: '\'text/html\'', code: true },
       { text: ' data. ' },
     ],
   },
@@ -533,7 +533,7 @@ export const initialValueBasicElements = [
         type: options[ELEMENT_CODE_LINE].type,
         children: [
           {
-            text: "const a = 'Hello';",
+            text: 'const a = \'Hello\';',
           },
         ],
       },
@@ -541,7 +541,7 @@ export const initialValueBasicElements = [
         type: options[ELEMENT_CODE_LINE].type,
         children: [
           {
-            text: "const b = 'World';",
+            text: 'const b = \'World\';',
           },
         ],
       },
@@ -680,7 +680,7 @@ export const initialValueList = [
   {
     type: options[ELEMENT_TODO_LI].type,
     checked: false,
-    children: [{ text: "Let's go to work!" }],
+    children: [{ text: 'Let\'s go to work!' }],
   },
   {
     type: options[ELEMENT_PARAGRAPH].type,
@@ -832,7 +832,7 @@ export const initialValueTables = [
     children: [
       {
         text:
-          "This table is just a basic example of rendering a table, and it doesn't have fancy functionality. But you could augment it to add support for navigating with arrow keys, displaying table headers, adding column and rows, or even formulas if you wanted to get really crazy!",
+          'This table is just a basic example of rendering a table, and it doesn\'t have fancy functionality. But you could augment it to add support for navigating with arrow keys, displaying table headers, adding column and rows, or even formulas if you wanted to get really crazy!',
       },
     ],
   },

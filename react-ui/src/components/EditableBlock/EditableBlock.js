@@ -5,33 +5,15 @@ import pluginsList from './config/plugins'
 
 import { SelectionToolbar } from '../Menus/index'
 
-const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) => {
-  const [value, setValue] = useState([
-    {
-      id: element.id,
-      type: element.type,
-      children: element.children,
-      placeholder: element.placeholder,
-    },
-  ])
+const EditableBlock = ({ blocks, addBlock, deleteBlock, updateBlock }) => {
 
-  const handleOnKeyUp = async e => {
-    if (e.ctrlKey && e.key === 'Enter') {
-      e.preventDefault()
-      addBlock({ id: element.id })
-    }
+  const [value, setValue] = useState([ ...blocks ])
+  console.log(value)
 
-    if (e.ctrlKey && e.key === 'Backspace') {
-      e.preventDefault()
-      deleteBlock({ id: element.id })
-    }
-  }
-
-  const editableProps = {
-    placeholder: element.placeholder,
-    id: element.id,
-    onKeyUp: e => handleOnKeyUp(e)
-  }
+  // const editableProps = {
+  //   placeholder: element.placeholder,
+  //   id: element.id,
+  // }
 
   const components = createSlatePluginsComponents()
   const options = createSlatePluginsOptions()
@@ -39,14 +21,11 @@ const EditableBlock = ({ element, index, addBlock, deleteBlock, updateBlock }) =
 
   return (
     <SlatePlugins
-      id={element.id}
-      data-block-id='hi'
       initialValue={value}
       onChange={value => setValue(value)}
       plugins={plugins}
       components={components}
       options={options}
-      editableProps={editableProps}
     >
       <SelectionToolbar />
     </SlatePlugins>

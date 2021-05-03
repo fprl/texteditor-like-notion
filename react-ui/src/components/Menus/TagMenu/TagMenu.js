@@ -13,7 +13,7 @@ const allowedTags = [
     id: 'paragraph',
     tag: 'p',
     label: 'Text',
-    placeholder: "Type '/' for commands",
+    placeholder: 'Type \'/\' for commands',
     image: textImage,
   },
   {

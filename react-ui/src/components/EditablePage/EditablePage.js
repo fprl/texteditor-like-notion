@@ -113,16 +113,12 @@ const EditablePage = ({ page, updatePage }) => {
             <Droppable droppableId='blocks'>
               {(provided) => (
                 <BlocksList className="page" ref={provided.innerRef} {...provided.droppableProps}>
-                  {blocks.map((block, index) => (
-                    <EditableBlock
-                      key={block.id}
-                      index={index}
-                      element={block}
-                      addBlock={addBlockHandler}
-                      deleteBlock={deleteBlockHandler}
-                      updateBlock={updateBlockHandler}
-                    />
-                  ))}
+                  <EditableBlock
+                    blocks={blocks}
+                    addBlock={addBlockHandler}
+                    deleteBlock={deleteBlockHandler}
+                    updateBlock={updateBlockHandler}
+                  />
                   {provided.placeholder}
                 </BlocksList>
               )}

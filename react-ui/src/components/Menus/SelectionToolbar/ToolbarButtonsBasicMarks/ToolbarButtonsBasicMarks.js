@@ -15,7 +15,7 @@ import FormatItalicIcon from '@material-ui/icons/FormatItalic'
 import FormatUnderlinedIcon from '@material-ui/icons/FormatUnderlined'
 import FormatStrikethroughIcon from '@material-ui/icons/FormatStrikethrough'
 import CodeIcon from '@material-ui/icons/Code'
-import LinkIcon from '@material-ui/icons/Link';
+import LinkIcon from '@material-ui/icons/Link'
 
 export const ToolbarButtonsBasicMarks = () => {
   const tooltip = {
