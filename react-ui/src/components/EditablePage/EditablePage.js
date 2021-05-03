@@ -36,14 +36,11 @@ const EditablePage = ({ page, updatePage }) => {
       console.groupEnd()
 
       if (prevBlocks && prevBlocks.length + 1 === blocks.length) {
-        console.log(lastBlockId)
-        const nextBlock = document.getElementById(lastBlockId)
-        console.log(document.getElementById(`${lastBlockId}`))
-        console.log(nextBlock)
+        const nextBlock = document.getElementById(lastBlockId).querySelector('.content-editable')
         nextBlock && nextBlock.focus()
       } else if (prevBlocks && prevBlocks.length - 1 === blocks.length) {
-        const previousBlock = document.getElementById(lastBlockId).firstChild
-        previousBlock && previousBlock.focus()
+        const previousBlock = document.getElementById(lastBlockId).querySelector('.content-editable')
+        previousBlock && setCaretToEnd(previousBlock)
       }
     }
   }, [lastBlockId, prevBlocks])
