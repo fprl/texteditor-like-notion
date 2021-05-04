@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react'
+import { defaultExtensions } from '@tiptap/starter-kit'
 import styled from 'styled-components'
-import { useEditable } from 'use-editable'
 
 const PageHeader = ({ information, addInformation, deleteInformation, updateInformation }) => {
-  const [header, setHeader] = useState({
-    pageId: information.id,
-    title: information.title,
-    titleLength: information.title.length,
-    cover: information.cover
+  const editor = useEditor({
+    extensions: defaultExtensions(),
+    content: '<p>Hello World! 🌎️</>',
   })
   const [isTagMenuOpen, setIsTagMenuOpen] = useState(false)
 
@@ -28,54 +27,7 @@ const PageHeader = ({ information, addInformation, deleteInformation, updateInfo
     header.title.trim().length > 0 ? document.title = header.title : document.title = 'Untitled'
   }, [header.title])
 
-  // hooks for managing content editable
-  const handleUseEditable = (title, position) => {
-    const formattedTitle = title.slice(0, -1)
-    setHeader(header => ({
-      ...header,
-      title,
-      titleLength: formattedTitle.length,
-    }))
-  }
-
-  useEditable(titleRef, handleUseEditable, {
-    indentation: 0,
-  })
-
-  const onKeyDownHandler = e => {
-    if (!e.shiftKey && e.key === 'Enter') {
-      e.preventDefault()
-      addInformation({
-        pageId: header.pageId,
-        ref: headerRef.current,
-      })
-    }
-
-    // navigate between sections
-    if (e.key === 'ArrowDown') {
-      e.preventDefault()
-      const firstElement = document.querySelector('.content-editable')
-      if (firstElement) {
-        firstElement.focus()
-        return
-      }
-    }
-  }
-
-  return (
-    <HeaderBlock ref={headerRef}>
-      <EditableWrapper>
-        <TitleEditable
-          id="title-editable"
-          ref={titleRef}
-          onKeyDown={onKeyDownHandler}
-        >
-          {header.title}
-        </TitleEditable>
-        {header.titleLength === 0 && <PlaceHolder placeholder='Untitled' />}
-      </EditableWrapper>
-    </HeaderBlock>
-  )
+  return <EditorContent editor={editor}></EditorContent>
 }
 
 export default PageHeader

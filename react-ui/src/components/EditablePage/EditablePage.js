@@ -103,7 +103,7 @@ const EditablePage = ({ page, updatePage }) => {
       { information && blocks &&
         <>
           <PageNavbar title={information.title} />
-          <PageHeader information={information} />
+          {/* <PageHeader information={information} /> */}
           <PageDivider />
 
           <DragDropContext onDragEnd={handleOnDragEnd}>

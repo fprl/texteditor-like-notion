@@ -3,10 +3,10 @@ import styled from 'styled-components'
 
 import { useOutsideMenu } from '../hooks/useOutsideMenu'
 
-import textImage from '../../../images/blocks/text.png'
-import h1Image from '../../../images/blocks/heading_1.png'
-import h2Image from '../../../images/blocks/heading_2.png'
-import h3Image from '../../../images/blocks/heading_3.png'
+import textImage from '../../../../images/blocks/text.png'
+import h1Image from '../../../../images/blocks/heading_1.png'
+import h2Image from '../../../../images/blocks/heading_2.png'
+import h3Image from '../../../../images/blocks/heading_3.png'
 
 const allowedTags = [
   {
@@ -39,7 +39,7 @@ const allowedTags = [
   },
 ]
 
-const TagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
+const BlockMenu = ({ handleSelection, handleCloseMenu }) => {
   const [tagList, setTagList] = useState(allowedTags)
   const [position, setPosition] = useState({ left: null, top: null })
   const [selectedTagIndex, setSelectedTagIndex] = useState(0)
@@ -52,54 +52,12 @@ const TagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
     const { top, left, height, width } = menuRef.current.getBoundingClientRect()
     const svgWidth = 20
 
-    if (pos.left && pos.top) {
-      setPosition({
-        left: pos.left - left + svgWidth,
-        top: pos.top - top,
-      })
-    }
+    setPosition({
+      left: -width - svgWidth,
+      top: height / 2 - height
+    })
   }, [])
 
-  useEffect(() => {
-    const handleOnKeyDown = e => {
-      if (e.key === 'Enter') {
-        e.preventDefault()
-        const { tag , placeholder } = tagList[selectedTagIndex]
-        handleSelection(tag, placeholder)
-      }
-      if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        if (selectedTagIndex === 0) {
-          setSelectedTagIndex(tagList.length - 1)
-        } else {
-          setSelectedTagIndex(selectedTagIndex - 1)
-        }
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        if (selectedTagIndex === tagList.length - 1) {
-          setSelectedTagIndex(0)
-        } else {
-          setSelectedTagIndex(selectedTagIndex + 1)
-        }
-      }
-    }
-
-    const handleOnKeyUp = e => {
-      if (e.key === 'Enter' || e.key === 'Escape' || e.key === 'Backspace' || e.key === '/') {
-        handleCloseMenu()
-        return
-      }
-    }
-
-    document.addEventListener('keydown', handleOnKeyDown)
-    document.addEventListener('keydown', handleOnKeyUp)
-
-    return () => {
-      document.removeEventListener('keydown', handleOnKeyDown)
-      document.removeEventListener('keydown', handleOnKeyUp)
-    }
-
-  }, [selectedTagIndex])
 
   return (
     <Menu top={position.top} left={position.left} ref={menuRef}>
@@ -107,16 +65,10 @@ const TagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
       <MenuList>
         {tagList.map(tag => {
           return (
-            <ListItem
-              isSelected={
-                tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null
-              }
-              key={tag.id}
-              onClick={() => {
-                handleSelection(tag.tag, tag.placeholder)
-                handleCloseMenu()
-              }}
-            >
+            <ListItem isSelected={tagList.indexOf(tag) === selectedTagIndex ? 'selected' : null} key={tag.id} onClick={() => {
+              handleSelection(tag.tag, tag.placeholder)
+              handleCloseMenu()
+            }}>
               <ItemImg src={tag.image} alt={tag.id} />
               <ItemLabel>{tag.label}</ItemLabel>
             </ListItem>
@@ -127,7 +79,7 @@ const TagMenu = ({ position: pos, handleSelection, handleCloseMenu }) => {
   )
 }
 
-export default TagMenu
+export default BlockMenu
 
 const Menu = styled.div`
   position: absolute;
@@ -172,8 +124,6 @@ const ListItem = styled.li`
 
   padding: var(--spacing-xxs) var(--spacing-s);
   cursor: pointer;
-
-  background-color: ${p => (p.isSelected ? 'var(--color-hover)' : '')};
 
   :hover {
     background-color: var(--color-hover);

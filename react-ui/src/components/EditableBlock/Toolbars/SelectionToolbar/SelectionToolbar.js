@@ -3,8 +3,6 @@ import { Editor, Range } from 'slate'
 import { ReactEditor, useSlate } from 'slate-react'
 import styled from 'styled-components'
 
-import { BlockCommands } from '../../EditableBlock/commands/blockCommands'
-
 import Portal from './Portal'
 import Button from './Button'
 import Icon from './Icon'

@@ -1889,6 +1889,11 @@
   "resolved" "https://registry.npmjs.org/@tiptap/extension-text/-/extension-text-2.0.0-beta.5.tgz"
   "version" "2.0.0-beta.5"
 
+"@tiptap/extension-underline@*":
+  "integrity" "sha512-p5y7WFKohnRy/+te7M+EBB9hLOBfbxtWsqPXwFEm3Puq8bj2RNdGVfOruPqlmHpBoCFJgG73RKi0lmqplo1XZg=="
+  "resolved" "https://registry.npmjs.org/@tiptap/extension-underline/-/extension-underline-2.0.0-beta.7.tgz"
+  "version" "2.0.0-beta.7"
+
 "@tiptap/react@*":
   "integrity" "sha512-Zncmbf5ZxFjQcBCDaBgx3F8TOLOPHFXW82WHHzJImZtirYXUwSse4fESaubvdKKTIkjo9JZ78VZP4lm3DhDxdg=="
   "resolved" "https://registry.npmjs.org/@tiptap/react/-/react-2.0.0-beta.26.tgz"
