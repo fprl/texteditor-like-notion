@@ -1,49 +1,26 @@
-// @refresh reset
-// Above code for Error: https://github.com/ianstormtaylor/slate/issues/4081
-
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { Slate, Editable, withReact } from 'slate-react'
-import { createEditor, Editor } from 'slate'
+import { useEditor, EditorContent } from '@tiptap/react'
+import { defaultExtensions } from '@tiptap/starter-kit'
 import { Draggable } from 'react-beautiful-dnd'
 import styled from 'styled-components'
 
-import { BlockCommands } from './commands/blockCommands'
 import { withDivider } from './plugins/index.js'
-import { getLineInformation } from '../../utilities'
 
-import Element from './Element/Element'
-import Leaf from './Leaf/Leaf'
 import BlockAction from '../BlockAction/BlockAction'
 import { BlockMenu, TagMenu, SelectionToolbar } from '../Menus/index'
 
 const CMD_KEY = '/'
 
 const EditableBlock = ({ blocks, addBlock, deleteBlock, updateBlock }) => {
+  const editor = useEditor({
+    extensions: defaultExtensions(),
+    content: '<p>Hello World! 🌎️</>',
+  })
 
-  const [value, setValue] = useState([ ...blocks ])
-  console.log(value)
-
-  // const editableProps = {
-  //   placeholder: element.placeholder,
-  //   id: element.id,
-  // }
-
-
-  return (
-    <SlatePlugins
-      initialValue={value}
-      onChange={value => setValue(value)}
-      plugins={plugins}
-      components={components}
-      options={options}
-    >
-      <SelectionToolbar />
-    </SlatePlugins>
-  )
+  return <EditorContent editor={editor}></EditorContent>
 }
 
 export default EditableBlock
-
 
 const DataBlock = styled.article`
   position: relative;
